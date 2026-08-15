@@ -1,0 +1,71 @@
+# FindMyBus – findmybus.abhijithpsubash.com
+# Allow all crawlers including LLM training and search bots
+
+User-agent: *
+Allow: /
+
+# OpenAI
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+# Google (Search + Gemini)
+User-agent: Googlebot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# Anthropic (Claude)
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+# Meta AI
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+# Apple
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Cohere
+User-agent: cohere-ai
+Allow: /
+
+# You.com
+User-agent: YouBot
+Allow: /
+
+# Bing / Copilot
+User-agent: bingbot
+Allow: /
+
+User-agent: msnbot
+Allow: /
+
+# Common crawlers for training datasets
+User-agent: CCBot
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
+Sitemap: https://findmybus.abhijithpsubash.com/sitemap.xml

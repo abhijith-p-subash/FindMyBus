@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <!-- ── Primary SEO ─────────────────────────────────────────────────────── -->
+    <title>FindMyBus – Live Bus Tracking</title>
+    <meta name="description" content="Track your bus live with FindMyBus. Real-time location on a map, stop-by-stop progress, arrival times, and delays for trackingo.in services. Free — no account needed." />
+    <meta name="keywords" content="live bus tracking, trackingo bus tracker, real-time bus location, bus arrival time, bus delay, Kerala bus tracking, India bus tracker, FindMyBus, bus live location" />
+    <meta name="author" content="Abhijith P Subash" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <link rel="canonical" href="https://findmybus.abhijithpsubash.com/" />
+
+    <!-- ── App Identity ────────────────────────────────────────────────────── -->
+    <meta name="application-name" content="FindMyBus" />
+    <meta name="theme-color" content="#7c3aed" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#7c3aed" media="(prefers-color-scheme: light)" />
+    <meta name="color-scheme" content="dark light" />
+
+    <!-- ── Open Graph ─────────────────────────────────────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://findmybus.abhijithpsubash.com/" />
+    <meta property="og:site_name" content="FindMyBus" />
+    <meta property="og:title" content="FindMyBus – Live Bus Tracking" />
+    <meta property="og:description" content="Track your bus live. Real-time location on a map, stop-by-stop progress, arrival times, and delays for trackingo.in services. Free, no login needed." />
+    <meta property="og:image" content="https://findmybus.abhijithpsubash.com/og-image.svg" />
+    <meta property="og:image:type" content="image/svg+xml" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="FindMyBus – Live Bus Tracking" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- ── Twitter / X Card ───────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="FindMyBus – Live Bus Tracking" />
+    <meta name="twitter:description" content="Track your bus live. Real-time map, stop progress, delays, and arrival times for trackingo.in services. Free, no account needed." />
+    <meta name="twitter:image" content="https://findmybus.abhijithpsubash.com/og-image.svg" />
+    <meta name="twitter:creator" content="@abhijithpsubash" />
+
+    <!-- ── PWA / Icons ─────────────────────────────────────────────────────── -->
+    <link rel="icon" type="image/svg+xml" href="/bus.svg" />
+    <link rel="apple-touch-icon" href="/bus.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- ── Performance: preconnect ─────────────────────────────────────────── -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://bus.trackingo.in" />
+    <link rel="dns-prefetch" href="https://tile.openstreetmap.org" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- ── Structured Data (JSON-LD) ──────────────────────────────────────── -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://findmybus.abhijithpsubash.com/#website",
+          "url": "https://findmybus.abhijithpsubash.com/",
+          "name": "FindMyBus",
+          "description": "Live bus tracking for trackingo.in services — free, privacy-first, no account needed.",
+          "inLanguage": "en-IN",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://findmybus.abhijithpsubash.com/track/{bus_code}"
+            },
+            "query-input": "required name=bus_code"
+          }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://findmybus.abhijithpsubash.com/#app",
+          "name": "FindMyBus",
+          "alternateName": "Find My Bus",
+          "url": "https://findmybus.abhijithpsubash.com/",
+          "description": "FindMyBus is a free, privacy-first web app for tracking buses live. Enter a trackingo.in URL or bus code to see real-time location on a map, stop-by-stop progress, arrival times, speed, and delays. All data stays in your browser.",
+          "applicationCategory": "TransportationApplication",
+          "applicationSubCategory": "Bus Tracking",
+          "operatingSystem": "Any modern web browser",
+          "browserRequirements": "Requires JavaScript",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "INR"
+          },
+          "featureList": [
+            "Real-time bus location on interactive map",
+            "Stop-by-stop progress with estimated arrival times",
+            "Delay indicators for each stop",
+            "Current bus speed display",
+            "Shareable tracking links (e.g. findmybus.abhijithpsubash.com/track/YE0407)",
+            "Dark and light mode",
+            "No account or app installation required",
+            "All data stored locally in browser — fully private"
+          ],
+          "screenshot": "https://findmybus.abhijithpsubash.com/og-image.svg",
+          "author": {
+            "@type": "Person",
+            "name": "Abhijith P Subash",
+            "url": "https://buymeacoffee.com/abhijithpsubash"
+          },
+          "isAccessibleForFree": true,
+          "inLanguage": "en-IN",
+          "countriesSupported": "IN"
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://findmybus.abhijithpsubash.com/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How do I track a bus on FindMyBus?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Visit findmybus.abhijithpsubash.com, tap 'Add trip', and paste a tracking URL from bus.trackingo.in or type the bus code directly (e.g. YE0407). The app shows live location on a map, all stops, and arrival times instantly."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Which bus services does FindMyBus support?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "FindMyBus currently supports buses tracked via trackingo.in (bus.trackingo.in). Support for more services is coming soon."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is FindMyBus free to use?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. FindMyBus is completely free. No account or sign-up is required. All trip data is stored only in your browser's localStorage — no data is sent to FindMyBus servers."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I share a bus tracking link with someone?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Open a tracking session and tap the share icon in the top bar. This shares a direct link like findmybus.abhijithpsubash.com/track/YE0407 — anyone who opens it can track the same bus live, even without an account."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does FindMyBus track my location or store my data?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. FindMyBus does not collect, track, or store any personal data. All trip history is saved only in your own browser's localStorage and never leaves your device."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+  </head>
+  <body>
+    <noscript>FindMyBus requires JavaScript. Please enable JavaScript to track your bus in real-time.</noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
