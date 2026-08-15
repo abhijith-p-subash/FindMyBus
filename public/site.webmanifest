@@ -1,0 +1,30 @@
+{
+  "name": "FindMyBus",
+  "short_name": "FindMyBus",
+  "description": "Live bus tracking for trackingo.in services. Real-time location, stops, and delays — free, no account needed.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#7c3aed",
+  "orientation": "any",
+  "categories": ["travel", "transportation", "utilities"],
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "/bus.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/og-image.svg",
+      "type": "image/svg+xml",
+      "sizes": "1200x630",
+      "label": "FindMyBus home screen"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

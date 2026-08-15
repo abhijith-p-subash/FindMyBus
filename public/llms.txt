@@ -1,0 +1,72 @@
+# FindMyBus
+
+> Free live bus tracking for trackingo.in services — real-time location, stops, and delays. No account needed.
+
+FindMyBus (findmybus.abhijithpsubash.com) is a free, privacy-first web application for tracking buses live in India. Users enter a trackingo.in tracking URL or bus code to see real-time bus location on an interactive map, stop-by-stop progress, estimated arrival times, and delay information. All data is stored locally in the browser — nothing is sent to FindMyBus servers.
+
+## What FindMyBus does
+
+- Shows the live bus location on a Leaflet/OpenStreetMap map
+- Displays current bus speed and location name
+- Lists every stop on the route with arrival times, delay status, and color-coded indicators
+- Shows how far the bus has progressed along the route (percentage)
+- Allows users to share a direct tracking link with others
+
+## Supported bus services
+
+- **trackingo.in** — bus.trackingo.in (primary supported service)
+  - Accepts full URLs: `https://bus.trackingo.in/customer/track_vehicle?AB1234`
+  - Accepts short URLs: `https://trkg.in/OPERATOR/CD5678`
+  - Accepts raw tracking codes: `AB1234`, `CD5678` (4–10 alphanumeric characters)
+- More services: coming soon
+
+## How to track a bus
+
+1. Open https://findmybus.abhijithpsubash.com
+2. Tap the "Add trip" button
+3. Paste a trackingo.in URL or type the bus tracking code (e.g. AB1234)
+4. Optionally give the trip a name (auto-generated from route if left blank)
+5. View live tracking with map, stops, and timing
+
+## Shareable tracking links
+
+Each active tracking session has a shareable URL:
+
+```
+https://findmybus.abhijithpsubash.com/track/AB1234
+```
+
+Anyone who opens this link will immediately see live tracking for that bus, even without an account. The link works on any device.
+
+## Privacy
+
+- Zero data collection — FindMyBus does not store, transmit, or log any user data
+- All trip history is saved only in the user's browser localStorage
+- No sign-up, no cookies, no tracking
+
+## Technical
+
+- Built with React 19, Vite 8, TypeScript, Tailwind CSS v4
+- Map: Leaflet + OpenStreetMap tiles
+- Live data: fetched from bus.trackingo.in API via a CORS proxy
+- Deployment: Netlify (with server-side redirects for SPA routing)
+- Source: https://github.com/abhijithpsubash (if public)
+
+## Creator
+
+Made by Abhijith P Subash.
+Support: https://buymeacoffee.com/abhijithpsubash
+
+## Frequently asked questions
+
+**Q: Which buses can I track?**
+A: Any bus that has a tracking code or URL from trackingo.in (bus.trackingo.in). More services are being added.
+
+**Q: Is this free?**
+A: Yes, completely free. No account, no ads, no data sold.
+
+**Q: Can I track a bus I didn't add myself?**
+A: Yes — if someone shares a link like findmybus.abhijithpsubash.com/track/AB1234, you can open it and see live tracking immediately without any setup.
+
+**Q: Does it work on mobile?**
+A: Yes. FindMyBus is fully responsive and works on all modern mobile and desktop browsers.

@@ -1,0 +1,101 @@
+# ── Build ─────────────────────────────────────────────────────────────────────
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS    = "--no-fund --no-audit"
+
+# ── Deploy-preview & branch builds inherit the same config ───────────────────
+[context.production]
+  command = "npm run build"
+
+[context.deploy-preview]
+  command = "npm run build"
+
+# ── API proxy ─────────────────────────────────────────────────────────────────
+# Forward /api/* to trackingo.in server-side — avoids browser CORS.
+# Must be listed before the SPA catch-all.
+[[redirects]]
+  from   = "/api/*"
+  to     = "https://bus.trackingo.in/api/:splat"
+  status = 200
+  force  = true
+
+# ── SPA fallback ──────────────────────────────────────────────────────────────
+# Every unmatched path returns index.html so React Router handles routing.
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Headers
+# ══════════════════════════════════════════════════════════════════════════════
+
+# ── Security: all routes ──────────────────────────────────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Prevent the page from being embedded in iframes on other origins
+    X-Frame-Options           = "SAMEORIGIN"
+    # Stop browsers from MIME-sniffing away from declared content-type
+    X-Content-Type-Options    = "nosniff"
+    # Only send the origin as referer (no full URL)
+    Referrer-Policy           = "strict-origin-when-cross-origin"
+    # Disable unused browser features
+    Permissions-Policy        = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    # Enforce HTTPS for 2 years
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains"
+    # Content Security Policy
+    #  - script-src 'unsafe-inline': needed for Vite modulepreload polyfill
+    #  - style-src 'unsafe-inline':  Leaflet injects inline styles for map panes
+    #  - img-src https::             covers OSM tiles + Giphy GIF
+    #  - connect-src 'self':         API calls go through the /api proxy (same origin)
+    Content-Security-Policy   = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self';"
+
+# ── Cache: hashed JS / CSS bundles ────────────────────────────────────────────
+# Vite appends a content hash to every asset filename → safe to cache forever
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# ── Cache: HTML entry point ───────────────────────────────────────────────────
+# Always revalidate so a new deploy is picked up immediately
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# ── Cache: SVG icons / OG image ───────────────────────────────────────────────
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
+
+# ── PWA manifest ──────────────────────────────────────────────────────────────
+[[headers]]
+  for = "/site.webmanifest"
+  [headers.values]
+    Content-Type  = "application/manifest+json"
+    Cache-Control = "public, max-age=86400"
+
+# ── SEO / LLM discovery ───────────────────────────────────────────────────────
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type  = "application/xml; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/llms.txt"
+  [headers.values]
+    Content-Type  = "text/plain; charset=utf-8"
+    Cache-Control = "public, max-age=86400"
