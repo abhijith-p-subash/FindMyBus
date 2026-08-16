@@ -12,11 +12,23 @@
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <link rel="canonical" href="https://findmybus.abhijithpsubash.com/" />
 
-    <!-- ── App Identity ────────────────────────────────────────────────────── -->
+    <!-- ── App identity / PWA ──────────────────────────────────────────────── -->
     <meta name="application-name" content="FindMyBus" />
-    <meta name="theme-color" content="#7c3aed" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#7c3aed" media="(prefers-color-scheme: light)" />
+    <meta name="apple-mobile-web-app-title" content="FindMyBus" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="color-scheme" content="dark light" />
+    <!-- Browser chrome follows the app ground, not the accent — an amber toolbar
+         would shout louder than anything inside the app. -->
+    <meta name="theme-color" content="#0B0B0D" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#FAFAFA" media="(prefers-color-scheme: light)" />
+
+    <!-- ── Icons ───────────────────────────────────────────────────────────── -->
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <!-- ── Open Graph ─────────────────────────────────────────────────────── -->
     <meta property="og:type" content="website" />
@@ -24,8 +36,8 @@
     <meta property="og:site_name" content="FindMyBus" />
     <meta property="og:title" content="FindMyBus – Live Bus Tracking" />
     <meta property="og:description" content="Track your bus live. Real-time location on a map, stop-by-stop progress, arrival times, and delays for trackingo.in services. Free, no login needed." />
-    <meta property="og:image" content="https://findmybus.abhijithpsubash.com/og-image.svg" />
-    <meta property="og:image:type" content="image/svg+xml" />
+    <meta property="og:image" content="https://findmybus.abhijithpsubash.com/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="FindMyBus – Live Bus Tracking" />
@@ -35,20 +47,20 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="FindMyBus – Live Bus Tracking" />
     <meta name="twitter:description" content="Track your bus live. Real-time map, stop progress, delays, and arrival times for trackingo.in services. Free, no account needed." />
-    <meta name="twitter:image" content="https://findmybus.abhijithpsubash.com/og-image.svg" />
+    <meta name="twitter:image" content="https://findmybus.abhijithpsubash.com/og-image.png" />
     <meta name="twitter:creator" content="@abhijithpsubash" />
-
-    <!-- ── PWA / Icons ─────────────────────────────────────────────────────── -->
-    <link rel="icon" type="image/svg+xml" href="/bus.svg" />
-    <link rel="apple-touch-icon" href="/bus.svg" />
-    <link rel="manifest" href="/site.webmanifest" />
 
     <!-- ── Performance: preconnect ─────────────────────────────────────────── -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://bus.trackingo.in" />
     <link rel="dns-prefetch" href="https://tile.openstreetmap.org" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Display / text / data — the three-voice type system -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- ── Structured Data (JSON-LD) ──────────────────────────────────────── -->
     <script type="application/ld+json">
@@ -77,7 +89,7 @@
           "name": "FindMyBus",
           "alternateName": "Find My Bus",
           "url": "https://findmybus.abhijithpsubash.com/",
-          "description": "FindMyBus is a free, privacy-first web app for tracking buses live. Enter a trackingo.in URL or bus code to see real-time location on a map, stop-by-stop progress, arrival times, speed, and delays. All data stays in your browser.",
+          "description": "FindMyBus is a free, privacy-first web app for tracking buses live. Enter a trackingo.in URL or bus code to see real-time location on a map, stop-by-stop progress, arrival times, speed, and delays. Installable as an app and usable offline with last-known data. All data stays in your browser.",
           "applicationCategory": "TransportationApplication",
           "applicationSubCategory": "Bus Tracking",
           "operatingSystem": "Any modern web browser",
@@ -90,14 +102,15 @@
           "featureList": [
             "Real-time bus location on interactive map",
             "Stop-by-stop progress with estimated arrival times",
-            "Delay indicators for each stop",
-            "Current bus speed display",
+            "Delay indicators and delay trend for each stop",
+            "Pin your destination stop and see how many stops away the bus is",
             "Shareable tracking links (e.g. findmybus.abhijithpsubash.com/track/YE0407)",
+            "Installable progressive web app with offline last-known position",
             "Dark and light mode",
-            "No account or app installation required",
+            "No account or app store install required",
             "All data stored locally in browser — fully private"
           ],
-          "screenshot": "https://findmybus.abhijithpsubash.com/og-image.svg",
+          "screenshot": "https://findmybus.abhijithpsubash.com/og-image.png",
           "author": {
             "@type": "Person",
             "name": "Abhijith P Subash",
@@ -124,7 +137,15 @@
               "name": "Which bus services does FindMyBus support?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "FindMyBus currently supports buses tracked via trackingo.in (bus.trackingo.in). Support for more services is coming soon."
+                "text": "FindMyBus currently supports buses tracked via trackingo.in (bus.trackingo.in), including short trkg.in links and bare tracking codes. Support for more operators is coming soon."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I install FindMyBus as an app?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. FindMyBus is a progressive web app. On Android and desktop Chrome you will be offered an Install button; on iPhone use Share then Add to Home Screen. Once installed it opens full screen and can show the last known bus position even without a connection."
               }
             },
             {

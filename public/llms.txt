@@ -7,9 +7,12 @@ FindMyBus (findmybus.abhijithpsubash.com) is a free, privacy-first web applicati
 ## What FindMyBus does
 
 - Shows the live bus location on a Leaflet/OpenStreetMap map
+- Leads with the single most useful figure: which stop is next and how many minutes away
 - Displays current bus speed and location name
 - Lists every stop on the route with arrival times, delay status, and color-coded indicators
 - Shows how far the bus has progressed along the route (percentage)
+- Lets users pin their destination stop and see how many stops away the bus is
+- Installs as a progressive web app and shows the last known position while offline
 - Allows users to share a direct tracking link with others
 
 ## Supported bus services
@@ -46,6 +49,7 @@ Anyone who opens this link will immediately see live tracking for that bus, even
 
 ## Technical
 
+- Installable progressive web app (service worker, offline app shell, cached last-known position)
 - Built with React 19, Vite 8, TypeScript, Tailwind CSS v4
 - Map: Leaflet + OpenStreetMap tiles
 - Live data: fetched from bus.trackingo.in API via a CORS proxy
@@ -69,4 +73,10 @@ A: Yes, completely free. No account, no ads, no data sold.
 A: Yes — if someone shares a link like findmybus.abhijithpsubash.com/track/YE0407, you can open it and see live tracking immediately without any setup.
 
 **Q: Does it work on mobile?**
-A: Yes. FindMyBus is fully responsive and works on all modern mobile and desktop browsers.
+A: Yes. FindMyBus is fully responsive. On phones it is a single-column app; on desktop it shows a
+saved-trip sidebar alongside the live tracking view.
+
+**Q: Can I install FindMyBus as an app?**
+A: Yes. On Android and desktop Chrome you will see an Install button. On iPhone, use Share then Add
+to Home Screen. Once installed it opens full screen and can still show the last known bus position
+without a connection.

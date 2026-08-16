@@ -1,161 +1,170 @@
 import { useRef, useState, useEffect } from 'react'
-import { ArrowLeft, Plus, RefreshCw, Sun, Moon, Share2, Check, Link2, MessageCircle } from 'lucide-react'
-import { formatLastUpdated } from '../utils'
+import { ArrowLeft, Plus, Sun, Moon, Share2, Check, Link2, MessageCircle, RefreshCw } from 'lucide-react'
+import { Logo } from './Logo'
 
-type HeaderProps =
-  | { mode: 'list'; onAdd: () => void; isDark: boolean; onToggleTheme: () => void }
-  | {
-      mode: 'tracking'
-      tripKey: string
-      tripName: string
-      lastUpdated: Date | null
-      countdown: number
-      onRefresh: () => void
-      onBack: () => void
-      onShare: () => void
-      onShareWhatsApp: () => void
-      shareCopied: boolean
-      loading: boolean
-      isDark: boolean
-      onToggleTheme: () => void
-    }
+const ctlClass =
+  'w-9 h-9 flex items-center justify-center rounded-ctl border border-line bg-surface ' +
+  'text-ink-3 hover:text-ink hover:border-line-strong active:scale-95 transition-all cursor-pointer shrink-0'
 
-export function Header(props: HeaderProps) {
-  const [showShareMenu, setShowShareMenu] = useState(false)
+function ThemeToggle({ isDark, onToggle }: { isDark: boolean; onToggle: () => void }) {
+  return (
+    <button
+      onClick={onToggle}
+      className={ctlClass}
+      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+    >
+      {isDark ? <Sun size={15} /> : <Moon size={15} />}
+    </button>
+  )
+}
+
+// ── List header ───────────────────────────────────────────────────────────────
+
+interface ListHeaderProps {
+  onAdd: () => void
+  isDark: boolean
+  onToggleTheme: () => void
+}
+
+export function ListHeader({ onAdd, isDark, onToggleTheme }: ListHeaderProps) {
+  return (
+    <header className="sticky top-0 z-20 bg-app/90 backdrop-blur-md">
+      <div className="max-w-2xl lg:max-w-none mx-auto px-5 h-14 flex items-center justify-between gap-3">
+        <Logo />
+        <div className="flex items-center gap-2">
+          <ThemeToggle isDark={isDark} onToggle={onToggleTheme} />
+          <button
+            onClick={onAdd}
+            className="h-9 px-3 sm:px-4 flex items-center gap-2 rounded-ctl bg-signal text-signal-ink
+                       font-semibold text-sm hover:brightness-105 active:scale-95 transition-all cursor-pointer"
+            aria-label="Add trip"
+          >
+            <Plus size={16} strokeWidth={2.6} />
+            <span className="hidden sm:inline">Add trip</span>
+          </button>
+        </div>
+      </div>
+    </header>
+  )
+}
+
+// ── Tracking header ───────────────────────────────────────────────────────────
+
+interface TrackHeaderProps {
+  tripKey: string
+  tripName: string
+  subtitle: string
+  /** Renders translucent so it can sit over the full-bleed map. */
+  overMap?: boolean
+  onBack: () => void
+  onShare: () => void
+  onShareWhatsApp: () => void
+  onRefresh: () => void
+  shareCopied: boolean
+  loading: boolean
+  isDark: boolean
+  onToggleTheme: () => void
+}
+
+export function TrackHeader({
+  tripKey, tripName, subtitle, overMap = false,
+  onBack, onShare, onShareWhatsApp, onRefresh, shareCopied, loading,
+  isDark, onToggleTheme,
+}: TrackHeaderProps) {
+  const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
-  // Close share menu when clicking outside
   useEffect(() => {
-    if (!showShareMenu) return
+    if (!menuOpen) return
     const handler = (e: MouseEvent) => {
-      if (!menuRef.current?.contains(e.target as Node)) setShowShareMenu(false)
+      if (!menuRef.current?.contains(e.target as Node)) setMenuOpen(false)
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
-  }, [showShareMenu])
+  }, [menuOpen])
 
-  const ThemeToggle = (
-    <button
-      onClick={props.onToggleTheme}
-      className="w-9 h-9 flex items-center justify-center rounded-xl text-zinc-400 light:text-zinc-500 hover:text-zinc-50 light:hover:text-zinc-900 hover:bg-zinc-800 light:hover:bg-zinc-100 active:bg-zinc-700 light:active:bg-zinc-200 transition-all cursor-pointer shrink-0"
-      aria-label={props.isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-    >
-      {props.isDark
-        ? <Sun size={16} />
-        : <Moon size={16} />
-      }
-    </button>
-  )
+  const surface = overMap
+    ? 'bg-surface/80 backdrop-blur-md border-line-strong'
+    : 'bg-surface border-line'
 
-  if (props.mode === 'list') {
-    return (
-      <header className="sticky top-0 z-20 bg-zinc-950/90 light:bg-white/90 backdrop-blur-md border-b border-zinc-800/60 light:border-zinc-200/60">
-        <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
-          {/* Brand */}
-          <div className="flex items-center gap-2.5">
-            <img src="/bus.svg" alt="" className="w-8 h-8 object-contain shrink-0" />
-            <span className="text-sm font-semibold text-zinc-50 light:text-zinc-900">FindMyBus</span>
-          </div>
-
-          <div className="flex items-center gap-1">
-            {ThemeToggle}
-            <button
-              onClick={props.onAdd}
-              className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 active:bg-violet-700 text-white font-medium transition-all cursor-pointer rounded-full h-9 px-3 sm:px-4 text-sm"
-              aria-label="Add trip"
-            >
-              <Plus size={16} strokeWidth={2.5} />
-              <span className="hidden sm:inline">Add trip</span>
-            </button>
-          </div>
-        </div>
-      </header>
-    )
-  }
-
-  const handleShareClick = () => {
-    // On mobile with native share, use it directly; on desktop show dropdown
-    if (typeof navigator.share === 'function') {
-      props.onShare()
-    } else {
-      setShowShareMenu(prev => !prev)
-    }
+  const handleShare = () => {
+    if (typeof navigator.share === 'function') onShare()
+    else setMenuOpen(o => !o)
   }
 
   return (
-    <header className="sticky top-0 z-20 bg-zinc-950/90 light:bg-white/90 backdrop-blur-md border-b border-zinc-800/60 light:border-zinc-200/60">
-      <div className="max-w-2xl mx-auto px-2 h-14 flex items-center justify-between gap-2">
-        {/* Back + title */}
-        <div className="flex items-center gap-1 min-w-0">
-          <button
-            onClick={props.onBack}
-            className="w-11 h-11 flex items-center justify-center rounded-xl text-zinc-400 light:text-zinc-500 hover:text-zinc-50 light:hover:text-zinc-900 hover:bg-zinc-800 light:hover:bg-zinc-100 active:bg-zinc-700 light:active:bg-zinc-200 transition-all shrink-0 cursor-pointer"
-            aria-label="Back"
-          >
-            <ArrowLeft size={18} />
-          </button>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-zinc-50 light:text-zinc-900 leading-none truncate">
-              {props.tripName !== props.tripKey ? props.tripName : 'Tracking'}
-            </p>
-            <p className="text-xs font-mono text-zinc-500 light:text-zinc-500 mt-0.5">{props.tripKey}</p>
-          </div>
-        </div>
+    <header className="relative z-20 px-4 sm:px-5 pt-2 pb-3 flex items-center gap-3">
+      <button
+        onClick={onBack}
+        aria-label="Back to trips"
+        className={`w-9 h-9 lg:hidden flex items-center justify-center rounded-ctl border
+                    text-ink active:scale-95 transition-all cursor-pointer shrink-0 ${surface}`}
+      >
+        <ArrowLeft size={16} />
+      </button>
 
-        {/* Controls */}
-        <div className="flex items-center gap-1 shrink-0">
-          {props.lastUpdated && (
-            <div className="flex items-center gap-1.5 text-xs text-zinc-500 mr-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 live-pulse inline-block" />
-              <span className="hidden sm:inline font-mono">{formatLastUpdated(props.lastUpdated)} ·</span>
-              <span className="tabular-nums">{props.countdown}s</span>
+      <div className="flex-1 min-w-0">
+        <h1 className="font-display font-semibold text-[17px] leading-tight tracking-tight text-ink truncate">
+          {tripName !== tripKey ? tripName : 'Tracking'}
+        </h1>
+        <p className="mt-0.5 font-mono text-[11px] leading-none text-ink-3 flex items-center gap-1.5 truncate">
+          <span>{tripKey}</span>
+          <span className="w-[3px] h-[3px] rounded-full bg-ink-5 shrink-0" />
+          <span className="truncate">{subtitle}</span>
+        </p>
+      </div>
+
+      <div className="flex items-center gap-2 shrink-0">
+        <button
+          onClick={onRefresh}
+          disabled={loading}
+          aria-label="Refresh now"
+          className={`w-9 h-9 hidden sm:flex items-center justify-center rounded-ctl border
+                      text-ink-3 hover:text-ink active:scale-95 transition-all cursor-pointer
+                      disabled:opacity-40 ${surface}`}
+        >
+          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+        </button>
+
+        <button
+          onClick={onToggleTheme}
+          aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          className={`w-9 h-9 flex items-center justify-center rounded-ctl border
+                      text-ink-3 hover:text-ink active:scale-95 transition-all cursor-pointer ${surface}`}
+        >
+          {isDark ? <Sun size={15} /> : <Moon size={15} />}
+        </button>
+
+        <div ref={menuRef} className="relative">
+          <button
+            onClick={handleShare}
+            aria-label={shareCopied ? 'Link copied' : 'Share this trip'}
+            className={`w-9 h-9 flex items-center justify-center rounded-ctl border
+                        text-ink active:scale-95 transition-all cursor-pointer ${surface}`}
+          >
+            {shareCopied ? <Check size={15} className="text-go-text" /> : <Share2 size={15} />}
+          </button>
+
+          {menuOpen && (
+            <div className="absolute right-0 top-full mt-2 w-44 rounded-tile bg-surface border border-line
+                            shadow-[var(--fmb-shadow-pop)] overflow-hidden z-30 animate-view-in">
+              <button
+                onClick={() => { onShare(); setMenuOpen(false) }}
+                className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-ink-2
+                           hover:bg-surface-2 transition-colors cursor-pointer"
+              >
+                <Link2 size={14} className="text-ink-4 shrink-0" /> Copy link
+              </button>
+              <div className="mx-3 h-px bg-line-soft" />
+              <button
+                onClick={() => { onShareWhatsApp(); setMenuOpen(false) }}
+                className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-ink-2
+                           hover:bg-surface-2 transition-colors cursor-pointer"
+              >
+                <MessageCircle size={14} className="text-go-text shrink-0" /> WhatsApp
+              </button>
             </div>
           )}
-          {ThemeToggle}
-
-          {/* Share button + dropdown */}
-          <div ref={menuRef} className="relative">
-            <button
-              onClick={handleShareClick}
-              className="w-9 h-9 flex items-center justify-center rounded-xl text-zinc-400 light:text-zinc-500 hover:text-zinc-50 light:hover:text-zinc-900 hover:bg-zinc-800 light:hover:bg-zinc-100 active:bg-zinc-700 light:active:bg-zinc-200 transition-all cursor-pointer"
-              aria-label={props.shareCopied ? 'Link copied!' : 'Share trip'}
-              title={props.shareCopied ? 'Link copied!' : 'Share trip link'}
-            >
-              {props.shareCopied
-                ? <Check size={15} className="text-emerald-400" />
-                : <Share2 size={15} />
-              }
-            </button>
-
-            {showShareMenu && (
-              <div className="absolute right-0 top-full mt-1.5 w-44 bg-zinc-900 light:bg-white border border-zinc-800 light:border-zinc-200 rounded-2xl shadow-xl shadow-black/40 light:shadow-zinc-300/40 overflow-hidden z-30 animate-view-in">
-                <button
-                  onClick={() => { props.onShare(); setShowShareMenu(false) }}
-                  className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-zinc-200 light:text-zinc-700 hover:bg-zinc-800 light:hover:bg-zinc-50 transition-colors cursor-pointer"
-                >
-                  <Link2 size={14} className="text-zinc-400 shrink-0" />
-                  Copy link
-                </button>
-                <div className="mx-3 h-px bg-zinc-800 light:bg-zinc-100" />
-                <button
-                  onClick={() => { props.onShareWhatsApp(); setShowShareMenu(false) }}
-                  className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-zinc-200 light:text-zinc-700 hover:bg-zinc-800 light:hover:bg-zinc-50 transition-colors cursor-pointer"
-                >
-                  <MessageCircle size={14} className="text-emerald-400 shrink-0" />
-                  WhatsApp
-                </button>
-              </div>
-            )}
-          </div>
-
-          <button
-            onClick={props.onRefresh}
-            disabled={props.loading}
-            className="w-9 h-9 flex items-center justify-center rounded-xl text-zinc-400 light:text-zinc-500 hover:text-zinc-50 light:hover:text-zinc-900 hover:bg-zinc-800 light:hover:bg-zinc-100 active:bg-zinc-700 light:active:bg-zinc-200 transition-all disabled:opacity-40 cursor-pointer"
-            aria-label="Refresh"
-          >
-            <RefreshCw size={15} className={props.loading ? 'animate-spin' : ''} />
-          </button>
         </div>
       </div>
     </header>

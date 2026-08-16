@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
-import { CheckCircle2, X, Link2 } from 'lucide-react'
+import { AlertCircle, CheckCircle2 } from 'lucide-react'
 import { parseTrackingKey } from '../utils'
 import { AddTripResult } from '../hooks/useTrips'
-import { SupportedServices } from './SupportedServices'
 
 interface AddTripSheetProps {
   isOpen: boolean
@@ -10,13 +9,14 @@ interface AddTripSheetProps {
   onAdd: (url: string, name: string) => AddTripResult
 }
 
+const FORMATS = ['bus.trackingo.in', 'trkg.in', 'YE0407']
+
 export function AddTripSheet({ isOpen, onClose, onAdd }: AddTripSheetProps) {
   const [mounted, setMounted] = useState(false)
   const [visible, setVisible] = useState(false)
   const [url, setUrl] = useState('')
   const [name, setName] = useState('')
-  const [parsedKey, setParsedKey] = useState<string | null>(null)
-  const [urlError, setUrlError] = useState('')
+  const [touched, setTouched] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -24,148 +24,144 @@ export function AddTripSheet({ isOpen, onClose, onAdd }: AddTripSheetProps) {
     if (isOpen) {
       setMounted(true)
       requestAnimationFrame(() => requestAnimationFrame(() => setVisible(true)))
-      setTimeout(() => inputRef.current?.focus(), 300)
-    } else {
-      setVisible(false)
-      const t = setTimeout(() => {
-        setMounted(false)
-        setUrl(''); setName(''); setParsedKey(null); setUrlError(''); setSubmitError('')
-      }, 300)
+      const t = setTimeout(() => inputRef.current?.focus(), 260)
       return () => clearTimeout(t)
     }
+    setVisible(false)
+    const t = setTimeout(() => {
+      setMounted(false)
+      setUrl(''); setName(''); setTouched(false); setSubmitError('')
+    }, 280)
+    return () => clearTimeout(t)
   }, [isOpen])
 
-  const handleUrlChange = (value: string) => {
-    setUrl(value)
-    setSubmitError('')
-    const key = parseTrackingKey(value)
-    setParsedKey(key)
-    setUrlError(value.length > 5 && !key ? 'Unrecognised format — try the full URL or just the code' : '')
-  }
-
-  const handleSubmit = () => {
-    if (!parsedKey) return
-    const result = onAdd(url.trim(), name.trim())
-    if (!result.success) setSubmitError(result.error ?? 'Failed to add trip')
-  }
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && parsedKey) handleSubmit()
-    if (e.key === 'Escape') onClose()
-  }
+  useEffect(() => {
+    if (!isOpen) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [isOpen, onClose])
 
   if (!mounted) return null
 
-  const content = (
-    <div className="px-5 sm:px-6 pt-2 pb-6 sm:pt-5 space-y-4">
-      {/* Title */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-base font-semibold text-zinc-50 light:text-zinc-900">Track a bus</h2>
-          <p className="text-xs text-zinc-500 mt-0.5">Paste the URL from your travel agency</p>
-        </div>
-        <button
-          onClick={onClose}
-          className="w-8 h-8 flex items-center justify-center rounded-xl text-zinc-500 hover:text-zinc-200 light:hover:text-zinc-800 hover:bg-zinc-800 light:hover:bg-zinc-100 transition-all cursor-pointer shrink-0"
-        >
-          <X size={16} />
-        </button>
-      </div>
+  const parsed = parseTrackingKey(url)
+  const showError = (touched && url.length > 4 && !parsed) || !!submitError
+  const errorText = submitError || 'That isn’t a supported tracking link.'
+  const ready = parsed !== null
 
-      {/* URL field */}
-      <div className="space-y-2">
-        <label className="text-xs font-medium text-zinc-400 light:text-zinc-600">Tracking URL or code</label>
-        <div className="relative">
-          <Link2 size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-600 light:text-zinc-400 pointer-events-none" />
-          <input
-            ref={inputRef}
-            type="text"
-            inputMode="url"
-            value={url}
-            onChange={e => handleUrlChange(e.target.value)}
-            placeholder="Paste URL or enter code…"
-            className="w-full bg-zinc-800/60 light:bg-zinc-100 border border-zinc-700 light:border-zinc-300 focus:border-violet-500 focus:bg-zinc-800 light:focus:bg-white
-              rounded-xl pl-9 pr-4 py-3 text-sm text-zinc-100 light:text-zinc-900 placeholder:text-zinc-600 light:placeholder:text-zinc-400
-              outline-none transition-all"
-          />
-        </div>
-        {parsedKey && (
-          <div className="flex items-center gap-1.5 text-xs text-emerald-400 light:text-emerald-600 animate-view-in">
-            <CheckCircle2 size={12} />
-            <span>Detected: <span className="font-mono font-semibold">{parsedKey}</span></span>
-          </div>
-        )}
-        {urlError && <p className="text-xs text-amber-400 light:text-amber-600">{urlError}</p>}
-      </div>
-
-      {/* Name field */}
-      <div className="space-y-2">
-        <label className="text-xs font-medium text-zinc-400 light:text-zinc-600">
-          Trip name <span className="text-zinc-700 light:text-zinc-400 font-normal">(optional)</span>
-        </label>
-        <input
-          type="text"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          placeholder="e.g. Office trip to Bangalore"
-          maxLength={50}
-          className="w-full bg-zinc-800/60 light:bg-zinc-100 border border-zinc-700 light:border-zinc-300 focus:border-violet-500 focus:bg-zinc-800 light:focus:bg-white
-            rounded-xl px-4 py-3 text-sm text-zinc-100 light:text-zinc-900 placeholder:text-zinc-600 light:placeholder:text-zinc-400
-            outline-none transition-all"
-        />
-      </div>
-
-      {/* Supported services */}
-      <SupportedServices compact />
-
-      {submitError && (
-        <p className="text-xs text-red-400 text-center bg-red-500/5 border border-red-500/20 rounded-lg py-2">{submitError}</p>
-      )}
-
-      <button
-        onClick={handleSubmit}
-        disabled={!parsedKey}
-        className="w-full py-3.5 rounded-xl text-sm font-semibold transition-all cursor-pointer
-          bg-violet-600 hover:bg-violet-500 active:bg-violet-700 text-white
-          disabled:bg-zinc-800 light:disabled:bg-zinc-200 disabled:text-zinc-600 light:disabled:text-zinc-400 disabled:cursor-not-allowed"
-      >
-        Start Tracking
-      </button>
-    </div>
-  )
+  const submit = () => {
+    if (!ready) { setTouched(true); return }
+    const result = onAdd(url, name)
+    if (!result.success) setSubmitError(result.error ?? 'Could not add that trip.')
+  }
 
   return (
-    <div className="fixed inset-0 z-50" onKeyDown={handleKeyDown}>
-      {/* Backdrop */}
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Add a bus"
+      className="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-center"
+    >
       <div
-        className="absolute inset-0 bg-black/60 light:bg-black/30 backdrop-blur-sm transition-opacity duration-300"
-        style={{ opacity: visible ? 1 : 0 }}
         onClick={onClose}
+        className={`absolute inset-0 bg-canvas/75 backdrop-blur-[3px] transition-opacity duration-280
+                    ${visible ? 'opacity-100' : 'opacity-0'}`}
       />
 
-      {/* ── Mobile: bottom sheet ─────────────────────────────── */}
       <div
-        className="sm:hidden absolute bottom-0 left-0 right-0 bg-zinc-900 light:bg-white border-t border-zinc-800 light:border-zinc-200 rounded-t-3xl pb-safe transition-transform duration-300"
-        style={{ transform: visible ? 'translateY(0)' : 'translateY(100%)' }}
+        className={`relative w-full sm:max-w-md flex flex-col gap-5 px-5 pt-3.5 pb-8 sm:p-6
+                    bg-surface border-t sm:border border-line-strong
+                    rounded-t-sheet sm:rounded-hero shadow-[var(--fmb-shadow-pop)]
+                    transition-transform duration-280 ease-[cubic-bezier(0.22,1,0.36,1)]
+                    ${visible ? 'translate-y-0' : 'translate-y-full sm:translate-y-4'}`}
       >
-        <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 bg-zinc-700 light:bg-zinc-300 rounded-full" />
-        </div>
-        {content}
-      </div>
+        <div className="w-11 h-1 rounded-full bg-line-strong mx-auto sm:hidden" />
 
-      {/* ── Desktop: centered dialog ─────────────────────────── */}
-      <div className="hidden sm:flex absolute inset-0 items-center justify-center p-4">
-        <div
-          className="w-full max-w-md bg-zinc-900 light:bg-white border border-zinc-800 light:border-zinc-200 rounded-2xl shadow-2xl shadow-black/50 light:shadow-zinc-300/50 transition-all duration-300"
-          style={{
-            opacity: visible ? 1 : 0,
-            transform: visible ? 'scale(1) translateY(0)' : 'scale(0.96) translateY(-0.5rem)',
-          }}
-          onClick={e => e.stopPropagation()}
-        >
-          {content}
+        <div className="flex flex-col gap-1.5">
+          <h2 className="font-display font-semibold text-[26px] leading-tight tracking-[-0.03em] text-ink">
+            Add a bus
+          </h2>
+          <p className="text-sm leading-normal text-ink-3">
+            Link, short link, or the code on its own.
+          </p>
         </div>
+
+        <div className="flex flex-col gap-2.5">
+          <label htmlFor="fmb-url" className="eyebrow">Tracking link</label>
+          <div className="relative">
+            <input
+              id="fmb-url"
+              ref={inputRef}
+              value={url}
+              onChange={e => { setUrl(e.target.value); setSubmitError('') }}
+              onBlur={() => setTouched(true)}
+              onKeyDown={e => { if (e.key === 'Enter') submit() }}
+              inputMode="url"
+              autoComplete="off"
+              autoCapitalize="characters"
+              spellCheck={false}
+              placeholder="bus.trackingo.in/…?YE0407"
+              aria-invalid={showError}
+              className={`w-full px-4 py-[15px] pr-10 rounded-field bg-app border font-mono text-sm text-ink
+                          placeholder:text-ink-5 focus:outline-none transition-colors
+                          ${showError ? 'border-delay' : parsed ? 'border-signal-edge' : 'border-line focus:border-line-strong'}`}
+            />
+            {showError && (
+              <AlertCircle size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-delay-text" />
+            )}
+            {!showError && parsed && (
+              <CheckCircle2 size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-signal-text" />
+            )}
+          </div>
+          {showError ? (
+            <p className="flex items-center gap-1.5 text-[13px] text-delay-text">
+              <AlertCircle size={13} className="shrink-0" /> {errorText}
+            </p>
+          ) : parsed ? (
+            <p className="font-mono text-[12px] text-ink-4">
+              Detected code <span className="text-signal-text font-medium">{parsed}</span>
+            </p>
+          ) : null}
+        </div>
+
+        <div className="flex flex-col gap-2.5">
+          <div className="flex items-center justify-between gap-3">
+            <label htmlFor="fmb-name" className="eyebrow">Name</label>
+            <span className="text-[11px] text-ink-5">optional · auto-named from route</span>
+          </div>
+          <input
+            id="fmb-name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') submit() }}
+            placeholder="Morning commute"
+            className="w-full px-4 py-[15px] rounded-field bg-app border border-line text-sm text-ink
+                       placeholder:text-ink-5 focus:outline-none focus:border-line-strong transition-colors"
+          />
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {FORMATS.map(f => (
+            <button
+              key={f}
+              onClick={() => { setUrl(f === 'YE0407' ? f : `${f}/`); inputRef.current?.focus() }}
+              className="px-3 py-2 rounded-chip bg-app border border-line font-mono text-[11px] text-ink-3
+                         hover:border-line-strong hover:text-ink transition-colors cursor-pointer"
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+
+        <button
+          onClick={submit}
+          disabled={!ready}
+          className="h-[50px] rounded-field bg-signal text-signal-ink font-semibold text-[15px]
+                     transition-all cursor-pointer hover:brightness-105 active:scale-[0.99]
+                     disabled:bg-line disabled:text-ink-4 disabled:cursor-not-allowed disabled:active:scale-100"
+        >
+          Track
+        </button>
       </div>
     </div>
   )
