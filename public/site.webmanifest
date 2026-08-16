@@ -2,27 +2,38 @@
   "name": "FindMyBus",
   "short_name": "FindMyBus",
   "description": "Live bus tracking for trackingo.in services. Real-time location, stops, and delays — free, no account needed.",
+  "id": "/",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#09090b",
-  "theme_color": "#7c3aed",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#0B0B0D",
+  "theme_color": "#0B0B0D",
   "orientation": "any",
   "categories": ["travel", "transportation", "utilities"],
   "lang": "en-IN",
+  "dir": "ltr",
   "icons": [
-    {
-      "src": "/bus.svg",
-      "type": "image/svg+xml",
-      "sizes": "any",
-      "purpose": "any"
-    }
+    { "src": "/icon.svg",              "type": "image/svg+xml", "sizes": "any",     "purpose": "any" },
+    { "src": "/icon-192.png",          "type": "image/png",     "sizes": "192x192", "purpose": "any" },
+    { "src": "/icon-512.png",          "type": "image/png",     "sizes": "512x512", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "type": "image/png",     "sizes": "512x512", "purpose": "maskable" }
   ],
   "screenshots": [
     {
-      "src": "/og-image.svg",
-      "type": "image/svg+xml",
+      "src": "/og-image.png",
+      "type": "image/png",
       "sizes": "1200x630",
-      "label": "FindMyBus home screen"
+      "form_factor": "wide",
+      "label": "FindMyBus live tracking"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Add a bus",
+      "short_name": "Add",
+      "url": "/?add=1",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ],
   "related_applications": [],

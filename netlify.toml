@@ -69,11 +69,29 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-# ── Cache: SVG icons / OG image ───────────────────────────────────────────────
+# ── Service worker ────────────────────────────────────────────────────────────
+# Must never be served stale, or a deploy can be pinned to an old shell forever.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control          = "public, max-age=0, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+# ── Cache: icons / OG image ───────────────────────────────────────────────────
 [[headers]]
   for = "/*.svg"
   [headers.values]
     Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
+
+[[headers]]
+  for = "/favicon.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
 
 # ── PWA manifest ──────────────────────────────────────────────────────────────
 [[headers]]

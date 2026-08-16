@@ -7,20 +7,25 @@ interface ErrorStateProps {
 
 export function ErrorState({ message, onRetry }: ErrorStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[40vh] gap-4 text-center px-4">
-      <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-        <AlertTriangle size={20} className="text-red-400 light:text-red-500" />
-      </div>
-      <div>
-        <p className="text-zinc-300 light:text-zinc-700 font-medium">Unable to load</p>
-        <p className="text-sm text-zinc-500 mt-1">{message}</p>
+    <div className="flex flex-col items-center justify-center text-center gap-5 py-20 px-4 animate-view-in">
+      <span className="w-14 h-14 rounded-full bg-delay-wash flex items-center justify-center text-delay-text">
+        <AlertTriangle size={22} />
+      </span>
+      <div className="flex flex-col gap-2 max-w-xs">
+        <h2 className="font-display font-semibold text-xl tracking-tight text-ink">
+          Couldn’t reach the bus
+        </h2>
+        <p className="text-sm leading-relaxed text-ink-3 text-pretty">
+          The operator’s tracker didn’t respond. It may be offline between trips.
+        </p>
+        <p className="font-mono text-[11px] text-ink-5 mt-1">{message}</p>
       </div>
       <button
         onClick={onRetry}
-        className="flex items-center gap-2 text-sm text-zinc-300 light:text-zinc-700 bg-zinc-800 light:bg-zinc-100 hover:bg-zinc-700 light:hover:bg-zinc-200 border border-zinc-700 light:border-zinc-300 px-4 py-2 rounded-lg transition-colors cursor-pointer"
+        className="flex items-center gap-2 px-5 py-3 rounded-field bg-signal text-signal-ink
+                   font-semibold text-sm hover:brightness-105 active:scale-[0.98] transition-all cursor-pointer"
       >
-        <RefreshCw size={14} />
-        Try again
+        <RefreshCw size={14} strokeWidth={2.5} /> Try again
       </button>
     </div>
   )

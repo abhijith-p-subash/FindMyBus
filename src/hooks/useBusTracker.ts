@@ -21,6 +21,8 @@ export function useBusTracker(key: string, options: Options = {}) {
   const [countdown, setCountdown] = useState(DEFAULT_INTERVAL / 1000)
   const [delayTrend, setDelayTrend] = useState<DelayTrend>(null)
   const [startedAt, setStartedAt] = useState<Date | null>(null)
+  /** True when the payload came from the service worker's cache, not the network. */
+  const [stale, setStale] = useState(false)
 
   const intervalRef   = useRef<ReturnType<typeof setInterval> | null>(null)
   const countdownRef  = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -52,16 +54,18 @@ export function useBusTracker(key: string, options: Options = {}) {
   const fetchData = useCallback(async () => {
     if (!key) return
     try {
-      setError(null)
       const res = await fetch(`/api/live/eta_map?current_status=true&key=${encodeURIComponent(key)}`)
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
 
+      // The service worker stamps replays it serves from cache.
+      const fromCache = res.headers.get('X-FMB-Cache') === 'hit'
       const json: ApiResult = await res.json()
 
       if (json.status === 302) {
         setCompleted(true)
         setCompletedMessage(json.message)
         setLoading(false)
+        setStale(false)
         clearTimers()
         onCompletedRef.current?.(json.message)
         return
@@ -79,14 +83,18 @@ export function useBusTracker(key: string, options: Options = {}) {
       prevDelayRef.current = currentDelay
 
       setData(apiData)
-      setLastUpdated(new Date())
+      setStale(fromCache)
+      // A cached replay is not a fresh reading — keep the old timestamp so the
+      // staleness clock in the UI keeps counting up.
+      if (!fromCache) setLastUpdated(new Date())
+      setError(fromCache ? 'Offline — showing last known position' : null)
       setStartedAt(prev => prev ?? new Date())
       onDataRef.current?.(apiData)
-      startCountdown()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch')
     } finally {
       setLoading(false)
+      startCountdown()
     }
   }, [key, clearTimers, startCountdown])
 
@@ -109,6 +117,7 @@ export function useBusTracker(key: string, options: Options = {}) {
     setCountdown(refreshIntervalRef.current / 1000)
     setDelayTrend(null)
     setStartedAt(null)
+    setStale(false)
     prevDelayRef.current = null
     clearTimers()
 
@@ -118,5 +127,15 @@ export function useBusTracker(key: string, options: Options = {}) {
     return clearTimers
   }, [key, options.refreshInterval]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  return { data, loading, error, completed, completedMessage, lastUpdated, countdown, refresh, delayTrend, startedAt }
+  // A returning connection should not wait out the poll interval.
+  useEffect(() => {
+    const onBack = () => { if (!completed) fetchData() }
+    window.addEventListener('online', onBack)
+    return () => window.removeEventListener('online', onBack)
+  }, [completed, fetchData])
+
+  return {
+    data, loading, error, completed, completedMessage,
+    lastUpdated, countdown, refresh, delayTrend, startedAt, stale,
+  }
 }
