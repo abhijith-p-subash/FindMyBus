@@ -21,6 +21,8 @@ export function AddTripSheet({ isOpen, onClose, onAdd }: AddTripSheetProps) {
 
   useEffect(() => {
     if (isOpen) {
+      // Mount must precede the enter transition by a frame, so these two cannot be
+      // collapsed into one render.
       setMounted(true)
       requestAnimationFrame(() => requestAnimationFrame(() => setVisible(true)))
       const t = setTimeout(() => inputRef.current?.focus(), 260)
@@ -29,14 +31,19 @@ export function AddTripSheet({ isOpen, onClose, onAdd }: AddTripSheetProps) {
     setVisible(false)
     const t = setTimeout(() => {
       setMounted(false)
-      setUrl(''); setName(''); setTouched(false); setSubmitError('')
+      setUrl('')
+      setName('')
+      setTouched(false)
+      setSubmitError('')
     }, 280)
     return () => clearTimeout(t)
   }, [isOpen])
 
   useEffect(() => {
     if (!isOpen) return
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [isOpen, onClose])
@@ -49,7 +56,10 @@ export function AddTripSheet({ isOpen, onClose, onAdd }: AddTripSheetProps) {
   const ready = parsed !== null
 
   const submit = () => {
-    if (!ready) { setTouched(true); return }
+    if (!ready) {
+      setTouched(true)
+      return
+    }
     const result = onAdd(url, name)
     if (!result.success) setSubmitError(result.error ?? 'Could not add that trip.')
   }
@@ -86,15 +96,22 @@ export function AddTripSheet({ isOpen, onClose, onAdd }: AddTripSheetProps) {
         </div>
 
         <div className="flex flex-col gap-2.5">
-          <label htmlFor="fmb-url" className="eyebrow">Tracking link</label>
+          <label htmlFor="fmb-url" className="eyebrow">
+            Tracking link
+          </label>
           <div className="relative">
             <input
               id="fmb-url"
               ref={inputRef}
               value={url}
-              onChange={e => { setUrl(e.target.value); setSubmitError('') }}
+              onChange={e => {
+                setUrl(e.target.value)
+                setSubmitError('')
+              }}
               onBlur={() => setTouched(true)}
-              onKeyDown={e => { if (e.key === 'Enter') submit() }}
+              onKeyDown={e => {
+                if (e.key === 'Enter') submit()
+              }}
               inputMode="url"
               autoComplete="off"
               autoCapitalize="characters"
@@ -106,10 +123,16 @@ export function AddTripSheet({ isOpen, onClose, onAdd }: AddTripSheetProps) {
                           ${showError ? 'border-delay' : parsed ? 'border-signal-edge' : 'border-line focus:border-line-strong'}`}
             />
             {showError && (
-              <AlertCircle size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-delay-text" />
+              <AlertCircle
+                size={15}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-delay-text"
+              />
             )}
             {!showError && parsed && (
-              <CheckCircle2 size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-signal-text" />
+              <CheckCircle2
+                size={15}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-signal-text"
+              />
             )}
           </div>
           {showError ? (
@@ -125,14 +148,18 @@ export function AddTripSheet({ isOpen, onClose, onAdd }: AddTripSheetProps) {
 
         <div className="flex flex-col gap-2.5">
           <div className="flex items-center justify-between gap-3">
-            <label htmlFor="fmb-name" className="eyebrow">Name</label>
+            <label htmlFor="fmb-name" className="eyebrow">
+              Name
+            </label>
             <span className="text-[11px] text-ink-5">optional · auto-named from route</span>
           </div>
           <input
             id="fmb-name"
             value={name}
             onChange={e => setName(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter') submit() }}
+            onKeyDown={e => {
+              if (e.key === 'Enter') submit()
+            }}
             placeholder="Morning commute"
             className="w-full px-4 py-[15px] rounded-field bg-app border border-line text-sm text-ink
                        placeholder:text-ink-5 focus:outline-none focus:border-line-strong transition-colors"

@@ -30,7 +30,10 @@ export function useInstallPrompt() {
       e.preventDefault()
       setDeferred(e as BeforeInstallPromptEvent)
     }
-    const onInstalled = () => { setInstalled(true); setDeferred(null) }
+    const onInstalled = () => {
+      setInstalled(true)
+      setDeferred(null)
+    }
 
     window.addEventListener('beforeinstallprompt', onPrompt)
     window.addEventListener('appinstalled', onInstalled)
@@ -50,14 +53,16 @@ export function useInstallPrompt() {
 
   const dismiss = useCallback(() => {
     setDismissed(true)
-    try { localStorage.setItem(DISMISSED_KEY, 'true') } catch {}
+    try {
+      localStorage.setItem(DISMISSED_KEY, 'true')
+    } catch {}
   }, [])
 
   const hidden = installed || standalone || dismissed
 
   return {
     canInstall: !hidden && deferred !== null,
-    iosHint:    !hidden && deferred === null && isIOS,
+    iosHint: !hidden && deferred === null && isIOS,
     install,
     dismiss,
   }

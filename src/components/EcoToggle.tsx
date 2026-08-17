@@ -14,9 +14,7 @@ export function EcoToggle({ enabled, onToggle }: EcoToggleProps) {
     >
       <span className="flex flex-col gap-0.5">
         <span className="font-medium text-[13px] leading-none text-ink">Eco mode</span>
-        <span className="text-[11px] text-ink-4">
-          Refresh every {enabled ? '60s' : '30s'}
-        </span>
+        <span className="text-[11px] text-ink-4">Refresh every {enabled ? '60s' : '30s'}</span>
       </span>
 
       <span

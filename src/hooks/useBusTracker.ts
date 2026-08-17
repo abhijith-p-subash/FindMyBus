@@ -25,22 +25,32 @@ export function useBusTracker(key: string, options: Options = {}) {
   /** True when the payload came from the service worker's cache, not the network. */
   const [stale, setStale] = useState(false)
 
-  const intervalRef   = useRef<ReturnType<typeof setInterval> | null>(null)
-  const countdownRef  = useRef<ReturnType<typeof setInterval> | null>(null)
-  const prevDelayRef  = useRef<number | null>(null)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const prevDelayRef = useRef<number | null>(null)
   const onCompletedRef = useRef(options.onCompleted)
-  const onDataRef      = useRef(options.onData)
+  const onDataRef = useRef(options.onData)
   const refreshIntervalRef = useRef(options.refreshInterval ?? DEFAULT_INTERVAL)
 
-  useEffect(() => { onCompletedRef.current = options.onCompleted }, [options.onCompleted])
-  useEffect(() => { onDataRef.current = options.onData }, [options.onData])
+  useEffect(() => {
+    onCompletedRef.current = options.onCompleted
+  }, [options.onCompleted])
+  useEffect(() => {
+    onDataRef.current = options.onData
+  }, [options.onData])
   useEffect(() => {
     refreshIntervalRef.current = options.refreshInterval ?? DEFAULT_INTERVAL
   }, [options.refreshInterval])
 
   const clearTimers = useCallback(() => {
-    if (intervalRef.current)  { clearInterval(intervalRef.current);  intervalRef.current  = null }
-    if (countdownRef.current) { clearInterval(countdownRef.current); countdownRef.current = null }
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+    if (countdownRef.current) {
+      clearInterval(countdownRef.current)
+      countdownRef.current = null
+    }
   }, [])
 
   const startCountdown = useCallback(() => {
@@ -111,6 +121,8 @@ export function useBusTracker(key: string, options: Options = {}) {
   }, [completed, clearTimers, fetchData])
 
   useEffect(() => {
+    // Every field resets when the tracked key changes. The alternative is remounting
+    // the whole subtree on a React key, which would also tear down the Leaflet map.
     setData(null)
     setLoading(true)
     setError(null)
@@ -132,13 +144,24 @@ export function useBusTracker(key: string, options: Options = {}) {
 
   // A returning connection should not wait out the poll interval.
   useEffect(() => {
-    const onBack = () => { if (!completed) fetchData() }
+    const onBack = () => {
+      if (!completed) fetchData()
+    }
     window.addEventListener('online', onBack)
     return () => window.removeEventListener('online', onBack)
   }, [completed, fetchData])
 
   return {
-    data, loading, error, completed, completedMessage,
-    lastUpdated, countdown, refresh, delayTrend, startedAt, stale,
+    data,
+    loading,
+    error,
+    completed,
+    completedMessage,
+    lastUpdated,
+    countdown,
+    refresh,
+    delayTrend,
+    startedAt,
+    stale,
   }
 }

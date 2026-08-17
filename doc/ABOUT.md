@@ -12,15 +12,23 @@ that has a colour, a radius, or an animation.
 ## Commands
 
 ```bash
-npm run dev      # Vite dev server; proxies /api → bus.trackingo.in
-npm run build    # tsc gate, then vite build → dist/
-npm run preview  # serve dist/ locally
+npm run dev           # Vite dev server; proxies /api → bus.trackingo.in
+npm run build         # tsc gate, then vite build → dist/
+npm run preview       # serve dist/ locally
+npm run lint          # ESLint (flat config)
+npm run format        # apply Prettier
+npm run typecheck     # tsc --noEmit
+npm run verify        # everything CI runs: lint + format:check + typecheck + build
 ```
 
-There is **no test suite and no linter**. `// eslint-disable-line` comments in `useBusTracker.ts`
-and `MapPanel.tsx` are inert documentation of intentional dependency-array omissions — ESLint is not
-installed. `tsc` is the only automated check; `strict`, `noUnusedLocals`, and `noUnusedParameters`
-are on, so an unused import fails the build.
+There is **no test suite yet**. `npm run verify` is the gate, and `.github/workflows/ci.yml` runs
+exactly those four steps on pushes and PRs to `main` and `development`. `tsconfig` has `strict`,
+`noUnusedLocals`, and `noUnusedParameters` on, so an unused import fails the build.
+
+`react-hooks/set-state-in-effect` is switched off for `App.tsx`, `AddTripSheet.tsx`, and
+`useBusTracker.ts` in `eslint.config.js` — those three deliberately sync React state from outside
+(a URL query param, a two-frame enter transition, a reset when the tracked key changes), and the
+rule fires on every `setState` in the block rather than once. New files still get the rule.
 
 ## Stack
 

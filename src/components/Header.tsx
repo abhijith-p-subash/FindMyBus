@@ -1,5 +1,15 @@
 import { useRef, useState, useEffect } from 'react'
-import { ArrowLeft, Plus, Sun, Moon, Share2, Check, Link2, MessageCircle, RefreshCw } from 'lucide-react'
+import {
+  ArrowLeft,
+  Plus,
+  Sun,
+  Moon,
+  Share2,
+  Check,
+  Link2,
+  MessageCircle,
+  RefreshCw,
+} from 'lucide-react'
 import { Logo } from './Logo'
 
 const ctlClass =
@@ -67,9 +77,18 @@ interface TrackHeaderProps {
 }
 
 export function TrackHeader({
-  tripKey, tripName, subtitle, overMap = false,
-  onBack, onShare, onShareWhatsApp, onRefresh, shareCopied, loading,
-  isDark, onToggleTheme,
+  tripKey,
+  tripName,
+  subtitle,
+  overMap = false,
+  onBack,
+  onShare,
+  onShareWhatsApp,
+  onRefresh,
+  shareCopied,
+  loading,
+  isDark,
+  onToggleTheme,
 }: TrackHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -146,10 +165,15 @@ export function TrackHeader({
           </button>
 
           {menuOpen && (
-            <div className="absolute right-0 top-full mt-2 w-44 rounded-tile bg-surface border border-line
-                            shadow-[var(--fmb-shadow-pop)] overflow-hidden z-30 animate-view-in">
+            <div
+              className="absolute right-0 top-full mt-2 w-44 rounded-tile bg-surface border border-line
+                            shadow-[var(--fmb-shadow-pop)] overflow-hidden z-30 animate-view-in"
+            >
               <button
-                onClick={() => { onShare(); setMenuOpen(false) }}
+                onClick={() => {
+                  onShare()
+                  setMenuOpen(false)
+                }}
                 className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-ink-2
                            hover:bg-surface-2 transition-colors cursor-pointer"
               >
@@ -157,7 +181,10 @@ export function TrackHeader({
               </button>
               <div className="mx-3 h-px bg-line-soft" />
               <button
-                onClick={() => { onShareWhatsApp(); setMenuOpen(false) }}
+                onClick={() => {
+                  onShareWhatsApp()
+                  setMenuOpen(false)
+                }}
                 className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-ink-2
                            hover:bg-surface-2 transition-colors cursor-pointer"
               >

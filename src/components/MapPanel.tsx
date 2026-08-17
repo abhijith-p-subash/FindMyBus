@@ -30,8 +30,14 @@ const busIconHtml = (frozen: boolean) => `
   </div>`
 
 export function MapPanel({
-  lat, lng, speed, location,
-  frozen = false, frozenAt, variant = 'panel', className = '',
+  lat,
+  lng,
+  speed,
+  location,
+  frozen = false,
+  frozenAt,
+  variant = 'panel',
+  className = '',
 }: MapPanelProps) {
   const hostRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<import('leaflet').Map | null>(null)
@@ -59,7 +65,12 @@ export function MapPanel({
       L.control.attribution({ prefix: '© OSM' }).addTo(map)
 
       const marker = L.marker([lat, lng], {
-        icon: L.divIcon({ html: busIconHtml(frozen), className: '', iconSize: [40, 40], iconAnchor: [20, 20] }),
+        icon: L.divIcon({
+          html: busIconHtml(frozen),
+          className: '',
+          iconSize: [40, 40],
+          iconAnchor: [20, 20],
+        }),
       }).addTo(map)
 
       mapRef.current = map
@@ -86,7 +97,12 @@ export function MapPanel({
   useEffect(() => {
     if (!markerRef.current || !L) return
     markerRef.current.setIcon(
-      L.divIcon({ html: busIconHtml(frozen), className: '', iconSize: [40, 40], iconAnchor: [20, 20] })
+      L.divIcon({
+        html: busIconHtml(frozen),
+        className: '',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
+      }),
     )
   }, [frozen])
 
@@ -124,7 +140,7 @@ export function MapPanel({
         }
       },
       () => setLocating(false),
-      { timeout: 8000 }
+      { timeout: 8000 },
     )
   }
 
@@ -160,14 +176,19 @@ export function MapPanel({
       )}
 
       <div className="absolute top-3 left-3 right-3 z-[900] flex items-start justify-between gap-2 pointer-events-none">
-        <span className="max-w-[62%] truncate px-2.5 py-1.5 rounded-chip bg-surface/85 backdrop-blur-md
-                         border border-line-strong text-[12px] text-ink-2">
+        <span
+          className="max-w-[62%] truncate px-2.5 py-1.5 rounded-chip bg-surface/85 backdrop-blur-md
+                         border border-line-strong text-[12px] text-ink-2"
+        >
           {location}
         </span>
         {!frozen && (
-          <span className="shrink-0 px-2.5 py-1.5 rounded-chip bg-surface/85 backdrop-blur-md
-                           border border-line-strong font-mono text-[12px] font-semibold text-ink tnum">
-            {speed}<span className="text-ink-4 font-normal"> km/h</span>
+          <span
+            className="shrink-0 px-2.5 py-1.5 rounded-chip bg-surface/85 backdrop-blur-md
+                           border border-line-strong font-mono text-[12px] font-semibold text-ink tnum"
+          >
+            {speed}
+            <span className="text-ink-4 font-normal"> km/h</span>
           </span>
         )}
       </div>
@@ -183,16 +204,20 @@ export function MapPanel({
           aria-label="Show my location"
           className={`${ctl} disabled:opacity-50`}
         >
-          {locating
-            ? <span className="w-3.5 h-3.5 rounded-full border-2 border-line-strong border-t-signal animate-spin" />
-            : <Crosshair size={14} className={userPos ? 'text-signal-text' : ''} />}
+          {locating ? (
+            <span className="w-3.5 h-3.5 rounded-full border-2 border-line-strong border-t-signal animate-spin" />
+          ) : (
+            <Crosshair size={14} className={userPos ? 'text-signal-text' : ''} />
+          )}
         </button>
       </div>
 
       {frozen && frozenAt && (
-        <span className="absolute bottom-3 right-3 z-[900] px-2.5 py-1.5 rounded-chip
+        <span
+          className="absolute bottom-3 right-3 z-[900] px-2.5 py-1.5 rounded-chip
                          bg-surface/85 backdrop-blur-md border border-line-strong
-                         font-mono text-[11px] text-ink-3">
+                         font-mono text-[11px] text-ink-3"
+        >
           frozen · {frozenAt}
         </span>
       )}
