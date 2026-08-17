@@ -1,7 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <rect width="512" height="512" rx="152" fill="#FFB020"/>
-  <g fill="none" stroke="#0B0B0D" stroke-width="56" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M330 148C286 128.8 254 150.4 254 200.8V388"/>
-    <path d="M198 236H314"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="512" height="512" role="img" aria-label="FindMyBus">
+  <!--
+    App icon: the mark on its amber tile. `mark.svg` is the bare mark on
+    transparent, and is the asset to reach for when placing the logo in content.
+
+    The mark is one path with fill-rule="evenodd", so the bus body is a hole and
+    the tile shows through it. That is what keeps a single drawing correct on any
+    background — see doc/DESIGN.md §2.
+  -->
+  <rect width="64" height="64" rx="19" fill="#FFB020"/>
+  <g transform="translate(32 32) scale(0.8) translate(-32 -32.5)">
+    <path fill="#0B0B0D" fill-rule="evenodd" d="
+      M32 5c-11.6 0-21 9.1-21 20.4 0 14.7 17.8 32.6 19.9 34.7a1.6 1.6 0 0 0 2.2 0C35.2 58 53 40.1 53 25.4 53 14.1 43.6 5 32 5Z
+      M23 17.5H41A3 3 0 0 1 44 20.5V31.5A3 3 0 0 1 41 34.5H23A3 3 0 0 1 20 31.5V20.5A3 3 0 0 1 23 17.5Z
+      M25.5 21H38.5A2 2 0 0 1 40.5 23V26A2 2 0 0 1 38.5 28H25.5A2 2 0 0 1 23.5 26V23A2 2 0 0 1 25.5 21Z
+      M23.8 31.5a2.2 2.2 0 1 0 4.4 0 2.2 2.2 0 1 0-4.4 0Z
+      M35.8 31.5a2.2 2.2 0 1 0 4.4 0 2.2 2.2 0 1 0-4.4 0Z
+    "/>
   </g>
 </svg>
