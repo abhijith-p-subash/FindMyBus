@@ -1,0 +1,52 @@
+name: Feature request
+description: Suggest an improvement or a new capability
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before writing, it is worth skimming `doc/DESIGN.md` §9–10 — a fair number of ideas are
+        already sketched there, and you may find yours with notes attached.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe the situation you are in, not the solution you have in mind.
+      placeholder: I never know how long I have before I need to leave the house…
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like to happen?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of the app
+      options:
+        - Tracking screen (map, hero card, timeline)
+        - Trip list
+        - Adding a trip / operator support
+        - PWA, offline, or install
+        - Theming or accessibility
+        - Something else
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+      description: Including "do nothing" — sometimes that is the right answer.
+
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Would you like to build it?
+      options:
+        - label: I would be happy to open a PR for this

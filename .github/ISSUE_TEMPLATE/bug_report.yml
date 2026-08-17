@@ -1,0 +1,85 @@
+name: Bug report
+description: Something is broken or behaves unexpectedly
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. The two fields that speed this up most are **viewport** and
+        **does it happen on the sample trip** — the latter separates a UI bug from an
+        upstream data problem straight away.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you saw, and what you expected instead.
+      placeholder: The timeline scrolled to the wrong stop after the bus moved…
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open /track/DEMO
+        2. Pin Sultan Bathery
+        3. Wait for the bus to advance a stop
+        4. …
+    validations:
+      required: true
+
+  - type: dropdown
+    id: viewport
+    attributes:
+      label: Where did you see it
+      options:
+        - Phone (portrait)
+        - Phone (landscape)
+        - Tablet
+        - Desktop — single column (below 1024px wide)
+        - Desktop — two-pane (1024px or wider)
+        - Installed as an app (standalone)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: demo
+    attributes:
+      label: Does it reproduce on the sample trip (/track/DEMO)?
+      options:
+        - "Yes"
+        - "No — only with a real tracking link"
+        - Not tried
+    validations:
+      required: true
+
+  - type: dropdown
+    id: theme
+    attributes:
+      label: Theme
+      options: ["Dark", "Light", "Both"]
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS
+      placeholder: Chrome 141 on Android 15 / Safari on iOS 18.2
+    validations:
+      required: true
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Console errors
+      description: Any red output in the browser console. Paste as text, not a screenshot.
+      render: shell
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Very helpful for anything visual.

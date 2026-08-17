@@ -12,29 +12,31 @@
  */
 
 const VERSION = 'v1'
-const SHELL  = `fmb-shell-${VERSION}`
+const SHELL = `fmb-shell-${VERSION}`
 const ASSETS = `fmb-assets-${VERSION}`
-const API    = `fmb-api-${VERSION}`
-const TILES  = `fmb-tiles-${VERSION}`
+const API = `fmb-api-${VERSION}`
+const TILES = `fmb-tiles-${VERSION}`
 
 const SHELL_URLS = ['/', '/site.webmanifest', '/icon.svg', '/icon-192.png', '/icon-512.png']
 const TILE_LIMIT = 220
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(SHELL)
+    caches
+      .open(SHELL)
       .then(cache => cache.addAll(SHELL_URLS))
       .catch(() => undefined) // a missing optional asset must not abort install
-      .then(() => self.skipWaiting())
+      .then(() => self.skipWaiting()),
   )
 })
 
 self.addEventListener('activate', event => {
   const keep = new Set([SHELL, ASSETS, API, TILES])
   event.waitUntil(
-    caches.keys()
+    caches
+      .keys()
       .then(names => Promise.all(names.filter(n => !keep.has(n)).map(n => caches.delete(n))))
-      .then(() => self.clients.claim())
+      .then(() => self.clients.claim()),
   )
 })
 
@@ -101,8 +103,11 @@ self.addEventListener('fetch', event => {
   if (url.hostname.endsWith('tile.openstreetmap.org')) {
     event.respondWith(
       cacheFirst(request, TILES)
-        .then(res => { trim(TILES, TILE_LIMIT); return res })
-        .catch(() => Response.error())
+        .then(res => {
+          trim(TILES, TILE_LIMIT)
+          return res
+        })
+        .catch(() => Response.error()),
     )
     return
   }
@@ -125,6 +130,6 @@ self.addEventListener('fetch', event => {
   }
 
   event.respondWith(
-    fetch(request).catch(() => caches.match(request).then(r => r || Response.error()))
+    fetch(request).catch(() => caches.match(request).then(r => r || Response.error())),
   )
 })

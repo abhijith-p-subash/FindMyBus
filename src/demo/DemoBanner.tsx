@@ -19,16 +19,16 @@ export function DemoBanner({ onExit, onAddReal, className = '' }: DemoBannerProp
       style={{ background: 'var(--fmb-signal-wash)', borderColor: 'var(--fmb-signal-edge)' }}
       role="status"
     >
-      <span className="w-[26px] h-[26px] shrink-0 rounded-[9px] bg-signal-wash
-                       flex items-center justify-center text-signal-text">
+      <span
+        className="w-[26px] h-[26px] shrink-0 rounded-[9px] bg-signal-wash
+                       flex items-center justify-center text-signal-text"
+      >
         <Sparkles size={13} />
       </span>
 
       <div className="flex-1 min-w-0 flex flex-col gap-0.5">
         <p className="font-semibold text-[13px] leading-tight text-ink">Sample trip</p>
-        <p className="text-[11px] text-ink-3">
-          Simulated data — no real bus is being tracked.
-        </p>
+        <p className="text-[11px] text-ink-3">Simulated data — no real bus is being tracked.</p>
       </div>
 
       <button

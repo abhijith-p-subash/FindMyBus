@@ -44,23 +44,23 @@ export interface ApiCompleted {
 export type ApiResult = ApiResponse | ApiCompleted
 
 export interface TripLastKnown {
-  at: string          // ISO timestamp of the poll that produced this
+  at: string // ISO timestamp of the poll that produced this
   currentStop: string
-  firstStop: string   // deduped first stop name
-  lastStop: string    // deduped last stop name
+  firstStop: string // deduped first stop name
+  lastStop: string // deduped last stop name
   delay: number | null
-  progress: number    // 0–100
-  stopIndex: number   // 1-based position of the current stop in the deduped route
-  stopCount: number   // total deduped stops
-  nextStop: string    // name of the next unvisited stop, '' at the end of the route
-  nextEta: string     // clock time for nextStop, '' if unknown
+  progress: number // 0–100
+  stopIndex: number // 1-based position of the current stop in the deduped route
+  stopCount: number // total deduped stops
+  nextStop: string // name of the next unvisited stop, '' at the end of the route
+  nextEta: string // clock time for nextStop, '' if unknown
 }
 
 export interface Trip {
-  key: string         // unique tracking key, e.g. "AB1234"
-  name: string        // user-provided name or key fallback
+  key: string // unique tracking key, e.g. "AB1234"
+  name: string // user-provided name or key fallback
   originalUrl: string // what the user pasted
-  addedAt: string     // ISO timestamp
+  addedAt: string // ISO timestamp
   lastKnown: TripLastKnown | null
 }
 

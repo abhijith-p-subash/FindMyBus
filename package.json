@@ -1,21 +1,64 @@
 {
-  "name": "bus-tracker",
+  "name": "findmybus",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
+  "description": "Live bus tracking as an installable PWA \u2014 real-time map, stop-by-stop timeline, delays and ETAs. No account, no backend, all data stays in your browser.",
   "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "Abhijith P Subash",
+    "url": "https://github.com/abhijith-p-subash"
+  },
+  "homepage": "https://findmybus.abhijithpsubash.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhijith-p-subash/FindMyBus.git"
+  },
+  "bugs": {
+    "url": "https://github.com/abhijith-p-subash/FindMyBus/issues"
+  },
+  "keywords": [
+    "bus-tracking",
+    "live-tracking",
+    "pwa",
+    "react",
+    "typescript",
+    "vite",
+    "leaflet",
+    "openstreetmap",
+    "kerala",
+    "india",
+    "public-transport"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\" \"public/sw.js\" \"*.{ts,js,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx}\" \"public/sw.js\" \"*.{ts,js,json}\"",
+    "verify": "npm run lint && npm run format:check && npm run typecheck && npm run build"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/leaflet": "^1.9.22",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.0.5",
+    "eslint": "^10.8.1",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.4",
+    "globals": "^17.11.0",
+    "prettier": "^3.9.6",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
+    "typescript-eslint": "^8.67.0",
     "vite": "^8.2.0"
   },
   "dependencies": {

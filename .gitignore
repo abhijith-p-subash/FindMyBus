@@ -43,3 +43,6 @@ build
 # OS
 .DS_Store
 Thumbs.db
+
+# ESLint cache
+.eslintcache

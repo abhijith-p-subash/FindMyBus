@@ -19,7 +19,13 @@ interface CompletedStateProps {
 const AUTO_DISMISS_SECS = 5
 
 export function CompletedState({
-  tripName, message, stops, durationMins, finalDelay, onDone, onKeep,
+  tripName,
+  message,
+  stops,
+  durationMins,
+  finalDelay,
+  onDone,
+  onKeep,
   keepLabel = 'Keep on list',
 }: CompletedStateProps) {
   const [remaining, setRemaining] = useState(AUTO_DISMISS_SECS)
@@ -29,7 +35,11 @@ export function CompletedState({
     if (held) return
     const id = setInterval(() => {
       setRemaining(prev => {
-        if (prev <= 1) { clearInterval(id); onDone(); return 0 }
+        if (prev <= 1) {
+          clearInterval(id)
+          onDone()
+          return 0
+        }
         return prev - 1
       })
     }, 1000)
@@ -58,7 +68,10 @@ export function CompletedState({
       <dl className="flex gap-6 px-6 py-4.5 rounded-card bg-surface-2 border border-line-soft">
         <Stat value={stops > 0 ? String(stops) : '—'} label="stops" />
         <span className="w-px bg-line-soft" />
-        <Stat value={durationMins !== null ? formatDurationTight(durationMins) : '—'} label="duration" />
+        <Stat
+          value={durationMins !== null ? formatDurationTight(durationMins) : '—'}
+          label="duration"
+        />
         <span className="w-px bg-line-soft" />
         <Stat
           value={finalDelay === null ? '—' : late ? `+${finalDelay}m` : '0m'}
@@ -79,7 +92,10 @@ export function CompletedState({
 
       <div className="flex items-center gap-2.5">
         <button
-          onClick={() => { setHeld(true); onKeep() }}
+          onClick={() => {
+            setHeld(true)
+            onKeep()
+          }}
           className="px-5 py-3 rounded-field border border-line bg-surface font-semibold text-sm text-ink
                      hover:border-line-strong active:scale-[0.98] transition-all cursor-pointer"
         >
@@ -97,7 +113,15 @@ export function CompletedState({
   )
 }
 
-function Stat({ value, label, tone = 'text-ink' }: { value: string; label: string; tone?: string }) {
+function Stat({
+  value,
+  label,
+  tone = 'text-ink',
+}: {
+  value: string
+  label: string
+  tone?: string
+}) {
   return (
     <div className="flex flex-col items-center gap-1.5">
       <dd className={`font-mono font-semibold text-lg leading-none tnum ${tone}`}>{value}</dd>

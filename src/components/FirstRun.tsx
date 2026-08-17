@@ -33,7 +33,9 @@ export function FirstRun({ onAdd, onStartDemo }: FirstRunProps) {
     <div className="animate-view-in flex flex-col gap-9 pt-10 sm:pt-16">
       <div className="flex flex-col gap-[18px]">
         <h1 className="font-display font-semibold text-[34px] sm:text-[40px] leading-[1.04] tracking-[-0.035em] text-ink">
-          Track any bus.<br />No sign-up.
+          Track any bus.
+          <br />
+          No sign-up.
         </h1>
         <p className="text-[15px] leading-relaxed text-ink-3 max-w-[29ch] text-pretty">
           Paste the tracking link your operator sent you. Everything stays on this device.
@@ -43,8 +45,13 @@ export function FirstRun({ onAdd, onStartDemo }: FirstRunProps) {
       <div className="p-4 rounded-card bg-surface border border-line flex flex-col gap-3">
         <input
           value={value}
-          onChange={e => { setValue(e.target.value); setError('') }}
-          onKeyDown={e => { if (e.key === 'Enter') submit() }}
+          onChange={e => {
+            setValue(e.target.value)
+            setError('')
+          }}
+          onKeyDown={e => {
+            if (e.key === 'Enter') submit()
+          }}
           inputMode="url"
           autoComplete="off"
           autoCapitalize="characters"

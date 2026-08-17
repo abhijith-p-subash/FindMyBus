@@ -23,8 +23,17 @@ interface TripListScreenProps {
 }
 
 export function TripListScreen({
-  trips, onOpenTrip, onRemoveTrip, onAdd, onQuickAdd, onStartDemo,
-  dataSaver, onToggleDataSaver, isDark, onToggleTheme, animClass = '',
+  trips,
+  onOpenTrip,
+  onRemoveTrip,
+  onAdd,
+  onQuickAdd,
+  onStartDemo,
+  dataSaver,
+  onToggleDataSaver,
+  isDark,
+  onToggleTheme,
+  animClass = '',
 }: TripListScreenProps) {
   const empty = trips.length === 0
 

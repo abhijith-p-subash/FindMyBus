@@ -9,9 +9,7 @@ import { TripRail } from './components/TripRail'
 import { AddTripSheet } from './components/AddTripSheet'
 import { Logo } from './components/Logo'
 import { ServicesNote } from './components/SupportedServices'
-import {
-  DEMO_KEY, DEMO_REFRESH_MS, isDemoKey, makeDemoTrip, resetDemo,
-} from './demo/demoApi'
+import { DEMO_KEY, DEMO_REFRESH_MS, isDemoKey, makeDemoTrip, resetDemo } from './demo/demoApi'
 
 type TripsAPI = ReturnType<typeof useTrips>
 
@@ -29,7 +27,8 @@ interface PageProps {
 function ListPage({ tripsAPI, saver, isDark, onToggleTheme, onOpenAdd, onStartDemo }: PageProps) {
   const navigate = useNavigate()
   const { state } = useLocation()
-  const animClass = (state as { dir?: string } | null)?.dir === 'back' ? 'animate-slide-in-left' : ''
+  const animClass =
+    (state as { dir?: string } | null)?.dir === 'back' ? 'animate-slide-in-left' : ''
 
   const open = (key: string) => navigate(`/track/${key}`, { state: { dir: 'forward' } })
 
@@ -96,7 +95,8 @@ function TrackPage({ tripsAPI, saver, isDark, onToggleTheme, onOpenAdd }: PagePr
   const { key } = useParams<{ key: string }>()
   const navigate = useNavigate()
   const { state } = useLocation()
-  const animClass = (state as { dir?: string } | null)?.dir === 'forward' ? 'animate-slide-in-right' : ''
+  const animClass =
+    (state as { dir?: string } | null)?.dir === 'forward' ? 'animate-slide-in-right' : ''
 
   const isDemo = !!key && isDemoKey(key)
 
@@ -106,7 +106,9 @@ function TrackPage({ tripsAPI, saver, isDark, onToggleTheme, onOpenAdd }: PagePr
 
   const exitDemo = () => {
     resetDemo()
-    try { localStorage.removeItem(`bus-tracker-mystop-${DEMO_KEY}`) } catch {}
+    try {
+      localStorage.removeItem(`bus-tracker-mystop-${DEMO_KEY}`)
+    } catch {}
     navigate('/', { state: { dir: 'back' } })
   }
 
@@ -116,11 +118,14 @@ function TrackPage({ tripsAPI, saver, isDark, onToggleTheme, onOpenAdd }: PagePr
         trip={demoTrip}
         onBack={exitDemo}
         onTripCompleted={() => resetDemo()}
-        onUpdateLastKnown={() => {}}          // nothing to persist for a simulation
+        onUpdateLastKnown={() => {}} // nothing to persist for a simulation
         dataSaver={saver.dataSaver}
         onToggleDataSaver={saver.toggleDataSaver}
         refreshInterval={DEMO_REFRESH_MS}
-        onAddReal={() => { exitDemo(); onOpenAdd() }}
+        onAddReal={() => {
+          exitDemo()
+          onOpenAdd()
+        }}
         animClass={animClass}
         isDark={isDark}
         onToggleTheme={onToggleTheme}
@@ -171,6 +176,7 @@ export default function App() {
   // The manifest ships an "Add a bus" shortcut pointing at /?add=1.
   useEffect(() => {
     if (new URLSearchParams(search).get('add') !== '1') return
+    // Reading the URL is exactly the external-system sync this effect exists for.
     setShowAdd(true)
     navigate('/', { replace: true })
   }, [search, navigate])
@@ -185,19 +191,22 @@ export default function App() {
    * parseTrackingKey is concerned, so intercept it here — otherwise typing it
    * would persist a fake trip into the user's list.
    */
-  const handleAdd = useCallback((url: string, name: string) => {
-    if (isDemoKey(url.trim())) {
-      setShowAdd(false)
-      startDemo()
-      return { success: true }
-    }
-    const result = tripsAPI.addTrip(url, name)
-    if (result.success && result.trip) {
-      setShowAdd(false)
-      navigate(`/track/${result.trip.key}`, { state: { dir: 'forward' } })
-    }
-    return result
-  }, [tripsAPI, navigate, startDemo])
+  const handleAdd = useCallback(
+    (url: string, name: string) => {
+      if (isDemoKey(url.trim())) {
+        setShowAdd(false)
+        startDemo()
+        return { success: true }
+      }
+      const result = tripsAPI.addTrip(url, name)
+      if (result.success && result.trip) {
+        setShowAdd(false)
+        navigate(`/track/${result.trip.key}`, { state: { dir: 'forward' } })
+      }
+      return result
+    },
+    [tripsAPI, navigate, startDemo],
+  )
 
   const pageProps: PageProps = {
     tripsAPI,
@@ -232,11 +241,7 @@ export default function App() {
         </Routes>
       </div>
 
-      <AddTripSheet
-        isOpen={showAdd}
-        onClose={() => setShowAdd(false)}
-        onAdd={handleAdd}
-      />
+      <AddTripSheet isOpen={showAdd} onClose={() => setShowAdd(false)} onAdd={handleAdd} />
     </div>
   )
 }

@@ -22,12 +22,21 @@ interface TripRailProps {
  * own, so this is hidden rather than duplicated.
  */
 export function TripRail({
-  trips, activeKey, onOpenTrip, onRemoveTrip, onAdd,
-  dataSaver, onToggleDataSaver, isDark, onToggleTheme,
+  trips,
+  activeKey,
+  onOpenTrip,
+  onRemoveTrip,
+  onAdd,
+  dataSaver,
+  onToggleDataSaver,
+  isDark,
+  onToggleTheme,
 }: TripRailProps) {
   return (
-    <aside className="hidden lg:flex flex-col w-[340px] xl:w-[380px] shrink-0 h-dvh sticky top-0
-                      border-r border-line-soft bg-app">
+    <aside
+      className="hidden lg:flex flex-col w-[340px] xl:w-[380px] shrink-0 h-dvh sticky top-0
+                      border-r border-line-soft bg-app"
+    >
       <div className="px-5 h-16 flex items-center justify-between shrink-0">
         <Logo />
         <div className="flex items-center gap-2">
