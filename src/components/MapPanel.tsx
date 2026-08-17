@@ -23,8 +23,8 @@ const busIconHtml = (frozen: boolean) => `
     <span style="position:absolute;left:8px;top:8px;width:24px;height:24px;border-radius:50%;
                  background:${frozen ? 'var(--fmb-ink-3)' : 'var(--fmb-signal)'};
                  border:3px solid var(--fmb-bg);display:flex;align-items:center;justify-content:center">
-      <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
-        <path d="M5 1 L9 9 L5 7 L1 9 Z" fill="var(--fmb-signal-ink)"/>
+      <svg width="12" height="12" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M32 6a2.6 2.6 0 0 1 2.4 1.6l19.4 46.8a2.6 2.6 0 0 1-3.5 3.3L32 49.4 13.7 57.7a2.6 2.6 0 0 1-3.5-3.3L29.6 7.6A2.6 2.6 0 0 1 32 6Z" fill="var(--fmb-signal-ink)"/>
       </svg>
     </span>
   </div>`
