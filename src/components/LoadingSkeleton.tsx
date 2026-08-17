@@ -1,6 +1,10 @@
 export function LoadingSkeleton() {
   return (
-    <div className="flex flex-col gap-5 animate-view-in" aria-busy="true" aria-label="Loading live data">
+    <div
+      className="flex flex-col gap-5 animate-view-in"
+      aria-busy="true"
+      aria-label="Loading live data"
+    >
       <div className="shimmer h-56 !rounded-card" />
 
       <div className="p-5 rounded-hero bg-surface border border-line-strong flex flex-col gap-[18px]">

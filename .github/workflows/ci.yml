@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+    branches: [main, development]
+  workflow_dispatch:
+
+# A new push to the same branch makes the in-flight run obsolete.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Lint, typecheck, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 7
+
+  pwa-assets:
+    name: PWA asset check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # These are easy to break by renaming a file, and the failure only shows up
+      # as a missing icon or a blank social preview in production.
+      - name: Every referenced PWA asset exists
+        run: |
+          set -euo pipefail
+          missing=0
+          for f in \
+            public/site.webmanifest \
+            public/sw.js \
+            public/icon.svg \
+            public/mark.svg \
+            public/icon-192.png \
+            public/icon-512.png \
+            public/icon-maskable-512.png \
+            public/apple-touch-icon.png \
+            public/favicon.ico \
+            public/og-image.png \
+            public/robots.txt \
+            public/_redirects
+          do
+            if [ ! -f "$f" ]; then echo "::error::missing $f"; missing=1; fi
+          done
+          exit $missing
+
+      - name: Manifest is valid JSON
+        run: node -e "JSON.parse(require('fs').readFileSync('public/site.webmanifest','utf8'))"
+
+      - name: Social preview is a raster image
+        run: |
+          # SVG og:image is rejected by every major platform — this guards the regression.
+          if grep -qE 'og:image"[^>]*content="[^"]*\.svg' index.html; then
+            echo "::error::og:image points at an SVG; social previews will render blank"
+            exit 1
+          fi

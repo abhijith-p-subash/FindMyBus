@@ -9,19 +9,22 @@ export function registerServiceWorker() {
   if (!import.meta.env.PROD) return
 
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').then(reg => {
-      // Activate a waiting worker straight away so a deploy lands on next load.
-      reg.addEventListener('updatefound', () => {
-        const installing = reg.installing
-        if (!installing) return
-        installing.addEventListener('statechange', () => {
-          if (installing.state === 'installed' && navigator.serviceWorker.controller) {
-            installing.postMessage('SKIP_WAITING')
-          }
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then(reg => {
+        // Activate a waiting worker straight away so a deploy lands on next load.
+        reg.addEventListener('updatefound', () => {
+          const installing = reg.installing
+          if (!installing) return
+          installing.addEventListener('statechange', () => {
+            if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+              installing.postMessage('SKIP_WAITING')
+            }
+          })
         })
       })
-    }).catch(() => {
-      // A failed registration must never break the app.
-    })
+      .catch(() => {
+        // A failed registration must never break the app.
+      })
   })
 }

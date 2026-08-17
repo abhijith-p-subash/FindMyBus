@@ -5,10 +5,10 @@ interface Service {
 }
 
 const SERVICES: Service[] = [
-  { name: 'Trackingo',       example: 'bus.trackingo.in', active: true },
-  { name: 'Trackingo short', example: 'trkg.in',          active: true },
-  { name: 'Bare code',       example: 'YE0407',           active: true },
-  { name: 'More operators',  example: 'soon',             active: false },
+  { name: 'Trackingo', example: 'bus.trackingo.in', active: true },
+  { name: 'Trackingo short', example: 'trkg.in', active: true },
+  { name: 'Bare code', example: 'YE0407', active: true },
+  { name: 'More operators', example: 'soon', active: false },
 ]
 
 /** The "works with" list — an accepted-formats reference, not a feature grid. */

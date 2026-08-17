@@ -47,27 +47,27 @@ interface RouteStop {
 }
 
 const ROUTE: RouteStop[] = [
-  { name: 'Kozhikode (Palayam)',  gap: 14, lat: 11.2588, lng: 75.7804 },
-  { name: 'Thondayad',            gap: 16, lat: 11.2760, lng: 75.8180 },
-  { name: 'Ramanattukara',        gap: 17, lat: 11.1780, lng: 75.8480 },
-  { name: 'Kunnamangalam',        gap: 22, lat: 11.3140, lng: 75.8830 },
-  { name: 'Thamarassery',         gap: 22, lat: 11.4130, lng: 75.9350 },
-  { name: 'Adivaram',             gap: 26, lat: 11.4560, lng: 75.9720 },
-  { name: 'Lakkidi',              gap: 22, lat: 11.5089, lng: 76.0247 },
-  { name: 'Vythiri',              gap: 22, lat: 11.5540, lng: 76.0430 },
-  { name: 'Kalpetta',             gap: 16, lat: 11.6090, lng: 76.0830 },
-  { name: 'Meenangadi',           gap: 16, lat: 11.6560, lng: 76.1650 },
-  { name: 'Sultan Bathery',       gap: 40, lat: 11.6650, lng: 76.2610 },
-  { name: 'Gundlupet',            gap: 43, lat: 11.8100, lng: 76.6900 },
-  { name: 'Nanjangud',            gap: 40, lat: 12.1180, lng: 76.6830 },
-  { name: 'Mysuru',               gap: 25, lat: 12.2958, lng: 76.6394 },
-  { name: 'Srirangapatna',        gap: 25, lat: 12.4180, lng: 76.6840 },
-  { name: 'Mandya',               gap: 25, lat: 12.5220, lng: 76.8950 },
-  { name: 'Maddur',               gap: 25, lat: 12.5860, lng: 77.0450 },
-  { name: 'Channapatna',          gap: 20, lat: 12.6520, lng: 77.2060 },
-  { name: 'Ramanagara',           gap: 20, lat: 12.7210, lng: 77.2800 },
-  { name: 'Bidadi',               gap: 45, lat: 12.7980, lng: 77.3860 },
-  { name: 'Bengaluru (Majestic)', gap: 0,  lat: 12.9767, lng: 77.5713 },
+  { name: 'Kozhikode (Palayam)', gap: 14, lat: 11.2588, lng: 75.7804 },
+  { name: 'Thondayad', gap: 16, lat: 11.276, lng: 75.818 },
+  { name: 'Ramanattukara', gap: 17, lat: 11.178, lng: 75.848 },
+  { name: 'Kunnamangalam', gap: 22, lat: 11.314, lng: 75.883 },
+  { name: 'Thamarassery', gap: 22, lat: 11.413, lng: 75.935 },
+  { name: 'Adivaram', gap: 26, lat: 11.456, lng: 75.972 },
+  { name: 'Lakkidi', gap: 22, lat: 11.5089, lng: 76.0247 },
+  { name: 'Vythiri', gap: 22, lat: 11.554, lng: 76.043 },
+  { name: 'Kalpetta', gap: 16, lat: 11.609, lng: 76.083 },
+  { name: 'Meenangadi', gap: 16, lat: 11.656, lng: 76.165 },
+  { name: 'Sultan Bathery', gap: 40, lat: 11.665, lng: 76.261 },
+  { name: 'Gundlupet', gap: 43, lat: 11.81, lng: 76.69 },
+  { name: 'Nanjangud', gap: 40, lat: 12.118, lng: 76.683 },
+  { name: 'Mysuru', gap: 25, lat: 12.2958, lng: 76.6394 },
+  { name: 'Srirangapatna', gap: 25, lat: 12.418, lng: 76.684 },
+  { name: 'Mandya', gap: 25, lat: 12.522, lng: 76.895 },
+  { name: 'Maddur', gap: 25, lat: 12.586, lng: 77.045 },
+  { name: 'Channapatna', gap: 20, lat: 12.652, lng: 77.206 },
+  { name: 'Ramanagara', gap: 20, lat: 12.721, lng: 77.28 },
+  { name: 'Bidadi', gap: 45, lat: 12.798, lng: 77.386 },
+  { name: 'Bengaluru (Majestic)', gap: 0, lat: 12.9767, lng: 77.5713 },
 ]
 
 const LAST_INDEX = ROUTE.length - 1
@@ -105,9 +105,8 @@ function buildStops(current: number, segmentProgress: number): Stop[] {
     const expected = clock(offset)
     const scheduled = clock(offset - delay)
 
-    const color: StopColor = isPast || isCurrent
-      ? (delay > 0 ? 'color_yellow' : 'color_green')
-      : 'color_gray'
+    const color: StopColor =
+      isPast || isCurrent ? (delay > 0 ? 'color_yellow' : 'color_green') : 'color_gray'
 
     return {
       geofence_name: entry.name,
@@ -181,9 +180,10 @@ export async function demoFetch(): Promise<Response> {
   const segmentProgress = (pollCount % POLLS_PER_STOP) / POLLS_PER_STOP
   pollCount += 1
 
-  const body = current >= LAST_INDEX
-    ? JSON.stringify(COMPLETED)
-    : JSON.stringify(buildResponse(current, segmentProgress))
+  const body =
+    current >= LAST_INDEX
+      ? JSON.stringify(COMPLETED)
+      : JSON.stringify(buildResponse(current, segmentProgress))
 
   return new Response(body, {
     status: 200,

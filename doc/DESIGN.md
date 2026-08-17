@@ -30,31 +30,76 @@ exclamation marks in the data path. Warmth is confined to first run and the arri
 
 ### The mark
 
-An **amber tile carrying a monoline lowercase "f"**. It is drawn as geometry — two stroked paths,
-no type — so it renders identically before webfonts load, at 16px in a browser tab, and when
-rasterised to PNG.
+A **location pin with a bus cut out of it** — chosen over an abstract arrow because for a free
+utility aimed at commuters standing at a stop, immediate category recognition beats designer
+abstraction. Someone seeing it knows what the app does before reading the name.
 
-| Asset | Purpose |
+It is **one path with `fill-rule="evenodd"`**, so nesting alternates:
+
+| Level | Subpath | Result |
+| --- | --- | --- |
+| 1 | pin outline | amber |
+| 2 | bus body | hole — shows whatever is behind |
+| 3 | window band, two wheels | amber again |
+
+That construction is the point. The original drawing filled the bus body with the *page* colour,
+which forced a separate asset per background (dark, white, amber) and broke on any unknown ground.
+As a single evenodd path there is one drawing, correct everywhere. **Do not split it back into
+stacked shapes.**
+
+### Size behaviour
+
+Measured by rendering at true pixel sizes, not assumed:
+
+| Size | What happens |
 | --- | --- |
-| `public/icon.svg` | Source of truth. Rounded tile, `rx=152` on a 512 canvas. |
-| `icon-192.png`, `icon-512.png` | Manifest `purpose: any` |
-| `icon-maskable-512.png` | Manifest `purpose: maskable` — full-bleed, no rounding; the platform applies its own shape |
-| `apple-touch-icon.png` | 180×180, opaque (iOS composites no alpha) |
-| `favicon.ico` | 48/32/16 multi-size |
-| `og-image.png` | 1200×630 social card |
-| `src/components/Logo.tsx` | The same geometry as inline SVG, using theme tokens so it inverts with the palette |
+| 48px+ | crisp, all detail reads |
+| 32px | clearly a bus |
+| 28px | readable; wheels going faint — **the detail floor** |
+| 24px | body visible, window and wheels merging |
+| ≤20px | interior is a smudge — drop to the plain pin |
 
-Regenerate the raster set with the scripts under the session scratchpad, or by re-running
-ImageMagick against `icon.svg`. Note that **ImageMagick's built-in SVG renderer silently drops
-stroked paths** — the generation script draws with `-draw path` primitives instead, which is why it
-exists rather than a one-line `magick icon.svg out.png`.
+`DETAIL_FLOOR = 28` in `Logo.tsx` encodes this, and the `.ico` carries different artwork per frame
+for the same reason.
+
+### Asset roles
+
+Each asset does one job; do not consolidate them.
+
+| Asset | Content | Used for |
+| --- | --- | --- |
+| `public/mark.svg` | bare amber mark, transparent | **tab favicon**, and the logo in content |
+| `public/icon.svg` | amber tile + dark mark | manifest `purpose: any` |
+| `icon-192.png`, `icon-512.png` | amber tile + dark mark | manifest raster |
+| `icon-maskable-512.png` | full-bleed amber, glyph inset to the centre 64% | manifest `maskable` |
+| `apple-touch-icon.png` | 180×180, opaque tile | iOS home screen |
+| `favicon.ico` | 16 = plain pin, 32/48 = full detail — **tileless amber** | legacy favicon |
+| `og-image.png` | 1200×630 card | social previews |
+| `src/components/Logo.tsx` | `Mark` + `Logo`, theme tokens | in-app |
+
+**The favicon is deliberately tileless.** A solid amber silhouette holds its shape at 16px
+noticeably better than a dark glyph knocked out of an amber tile, and it works on both light and
+dark tab strips. The tile is for home screens, where there is room for it to mean something.
+
+### The arrow is the vehicle, not the brand
+
+The heading arrow considered as a logo candidate already lives in the app as the **map marker**.
+Keeping the two separate gives each one job — the pin is identity, the arrow is live position and
+direction — and is why a hybrid mark combining them was rejected. Both are drawn on the same
+64-unit grid so they read as one family. The marker geometry is in `MapPanel.tsx`.
 
 ### The wordmark
 
 `findmybus` — one word, all lowercase, Bricolage Grotesque Semibold, `letter-spacing: -0.02em`.
 Lowercase is deliberate: it reads as a utility, not a brand.
 
----
+### Regenerating the rasters
+
+**ImageMagick's SVG renderer silently drops stroked paths** and handles transforms unreliably, so
+the generation script draws with `-draw path` primitives and composites glyph onto tile in pixels
+rather than converting `icon.svg` directly. Fills and `evenodd` do render correctly, which is part
+of why the mark is fills-only. Regenerate by re-running that script against `mark.svg`, then check
+the output by eye at 16px — that is where mistakes show first.
 
 ## 3. Colour
 

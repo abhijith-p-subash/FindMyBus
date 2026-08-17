@@ -11,10 +11,14 @@ export function InstallCard() {
   if (!canInstall && !iosHint) return null
 
   return (
-    <div className="relative flex items-center gap-3 px-4 py-3.5 rounded-tile bg-surface-2
-                    border border-line animate-view-in">
-      <span className="w-[26px] h-[26px] shrink-0 rounded-[9px] bg-signal-wash
-                       flex items-center justify-center text-signal-text">
+    <div
+      className="relative flex items-center gap-3 px-4 py-3.5 rounded-tile bg-surface-2
+                    border border-line animate-view-in"
+    >
+      <span
+        className="w-[26px] h-[26px] shrink-0 rounded-[9px] bg-signal-wash
+                       flex items-center justify-center text-signal-text"
+      >
         {iosHint ? <Share size={13} /> : <Download size={13} />}
       </span>
 
