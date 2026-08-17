@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { ApiResponse, ApiResult } from '../types'
+import { isDemoKey, demoFetch } from '../demo/demoApi'
 
 const DEFAULT_INTERVAL = 30_000
 
@@ -54,7 +55,9 @@ export function useBusTracker(key: string, options: Options = {}) {
   const fetchData = useCallback(async () => {
     if (!key) return
     try {
-      const res = await fetch(`/api/live/eta_map?current_status=true&key=${encodeURIComponent(key)}`)
+      const res = isDemoKey(key)
+        ? await demoFetch()
+        : await fetch(`/api/live/eta_map?current_status=true&key=${encodeURIComponent(key)}`)
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
 
       // The service worker stamps replays it serves from cache.

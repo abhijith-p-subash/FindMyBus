@@ -115,6 +115,11 @@ dynamically imported, and separate effects handle position, frozen-marker swap, 
 `ResizeObserver` → `invalidateSize()` (needed because the panel changes size at the `lg` breakpoint).
 Never let the init effect re-run.
 
+**Leaflet escapes its container without a stacking context.** `MapPanel`'s root carries
+`isolate z-0` because Leaflet assigns its panes and controls z-indexes up to 1000; with
+`position: relative` alone those compete with the app's own layers and paint over the hero card,
+timeline, and sticky header. Removing `isolate` reintroduces that bug.
+
 **Icon generation cannot use ImageMagick's SVG renderer** — it silently drops stroked paths and
 emits a bare amber square. The raster set is drawn with `-draw path` primitives instead. See
 `DESIGN.md` §2.
@@ -140,6 +145,16 @@ one, rather than reading old data optimistically.
 - `netlify.toml` serves `/sw.js` with `max-age=0, must-revalidate` and `Service-Worker-Allowed: /`.
   Caching it would pin users to an old shell.
 - Bump `VERSION` in `sw.js` when the caching strategy changes; old caches are dropped on activate.
+
+## Sample trip (`src/demo/`)
+
+A shipped onboarding path, not a test fixture: `/track/DEMO` runs a simulated Kozhikode → Bengaluru
+bus so a first-time visitor with no tracking link still sees the app work. It polls every 5s and
+advances a stop every ~20s, then hits `status: 302` and the real arrival screen.
+
+It is deliberately walled off from real state — never persisted, never touches `/api`, `lastKnown`
+writes dropped, `bus-tracker-mystop-DEMO` cleared on exit. `handleAdd` in `App.tsx` intercepts a
+typed `DEMO` so it cannot become a saved trip. See `src/demo/README.md` before changing any of it.
 
 ## Input parsing
 

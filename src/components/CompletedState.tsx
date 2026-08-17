@@ -12,12 +12,15 @@ interface CompletedStateProps {
   onDone: () => void
   /** Keep the trip saved and go back. */
   onKeep: () => void
+  /** Overridable because the sample trip has nothing to keep. */
+  keepLabel?: string
 }
 
 const AUTO_DISMISS_SECS = 5
 
 export function CompletedState({
   tripName, message, stops, durationMins, finalDelay, onDone, onKeep,
+  keepLabel = 'Keep on list',
 }: CompletedStateProps) {
   const [remaining, setRemaining] = useState(AUTO_DISMISS_SECS)
   const [held, setHeld] = useState(false)
@@ -80,7 +83,7 @@ export function CompletedState({
           className="px-5 py-3 rounded-field border border-line bg-surface font-semibold text-sm text-ink
                      hover:border-line-strong active:scale-[0.98] transition-all cursor-pointer"
         >
-          Keep on list
+          {keepLabel}
         </button>
         <button
           onClick={onDone}

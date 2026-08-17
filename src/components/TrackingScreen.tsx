@@ -15,6 +15,8 @@ import { StaleBanner } from './StaleBanner'
 import { CompletedState } from './CompletedState'
 import { ErrorState } from './ErrorState'
 import { LoadingSkeleton } from './LoadingSkeleton'
+import { DemoBanner } from '../demo/DemoBanner'
+import { isDemoKey } from '../demo/demoApi'
 
 interface TrackingScreenProps {
   trip: Trip
@@ -24,6 +26,8 @@ interface TrackingScreenProps {
   dataSaver: boolean
   onToggleDataSaver: () => void
   refreshInterval: number
+  /** Leave the sample trip and open the add sheet. Only used in demo mode. */
+  onAddReal: () => void
   animClass: string
   isDark: boolean
   onToggleTheme: () => void
@@ -32,8 +36,9 @@ interface TrackingScreenProps {
 export function TrackingScreen({
   trip, onBack, onTripCompleted, onUpdateLastKnown,
   dataSaver, onToggleDataSaver, refreshInterval,
-  animClass, isDark, onToggleTheme,
+  onAddReal, animClass, isDark, onToggleTheme,
 }: TrackingScreenProps) {
+  const isDemo = isDemoKey(trip.key)
   const timelineRef = useRef<StopTimelineHandle>(null)
   const { share, copied, shareViaWhatsApp } = useShare(trip.key, trip.name)
   const { myStopId, setMyStop } = useMyStop(trip.key)
@@ -99,7 +104,8 @@ export function TrackingScreen({
               durationMins={durationMins}
               finalDelay={finalDelay}
               onDone={() => { onTripCompleted(trip.key); onBack() }}
-              onKeep={onBack}
+              onKeep={isDemo ? onAddReal : onBack}
+              keepLabel={isDemo ? 'Track a real bus' : 'Keep on list'}
             />
           </div>
         ) : error && !data ? (
@@ -126,6 +132,8 @@ export function TrackingScreen({
             />
 
             <div className="max-w-2xl mx-auto px-4 sm:px-5 flex flex-col gap-4 -mt-10 lg:mt-4 relative z-10">
+              {isDemo && <DemoBanner onExit={onBack} onAddReal={onAddReal} />}
+
               {degraded && (
                 <StaleBanner
                   lastUpdated={lastUpdated}
@@ -181,7 +189,7 @@ export function TrackingScreen({
       )}
 
       <p className="text-center text-[11px] text-ink-5 pb-safe pt-4">
-        {trip.key} · all data stays in your browser
+        {isDemo ? 'Sample trip' : trip.key} · all data stays in your browser
       </p>
     </div>
   )
