@@ -5,6 +5,7 @@ import { TripCard } from './TripCard'
 import { FirstRun } from './FirstRun'
 import { InstallCard } from './InstallCard'
 import { EcoToggle } from './EcoToggle'
+import { ServicesNote } from './SupportedServices'
 import { BuyMeCoffeeButton } from './BuyMeCoffeeButton'
 
 interface TripListScreenProps {
@@ -13,6 +14,7 @@ interface TripListScreenProps {
   onRemoveTrip: (key: string) => void
   onAdd: () => void
   onQuickAdd: (url: string, name: string) => AddTripResult
+  onStartDemo: () => void
   dataSaver: boolean
   onToggleDataSaver: () => void
   isDark: boolean
@@ -21,7 +23,7 @@ interface TripListScreenProps {
 }
 
 export function TripListScreen({
-  trips, onOpenTrip, onRemoveTrip, onAdd, onQuickAdd,
+  trips, onOpenTrip, onRemoveTrip, onAdd, onQuickAdd, onStartDemo,
   dataSaver, onToggleDataSaver, isDark, onToggleTheme, animClass = '',
 }: TripListScreenProps) {
   const empty = trips.length === 0
@@ -32,7 +34,7 @@ export function TripListScreen({
 
       <main className="flex-1 w-full max-w-2xl mx-auto px-5 pb-8">
         {empty ? (
-          <FirstRun onAdd={onQuickAdd} />
+          <FirstRun onAdd={onQuickAdd} onStartDemo={onStartDemo} />
         ) : (
           <div className="flex flex-col gap-5 pt-6">
             <div className="flex items-baseline gap-2.5">
@@ -63,6 +65,9 @@ export function TripListScreen({
       </main>
 
       <footer className="w-full max-w-2xl mx-auto px-5 pb-safe pt-2 flex flex-col items-center gap-3">
+        {/* First run already shows the full "Works with" list, so only repeat it
+            here once the user has trips and that screen is gone. */}
+        {!empty && <ServicesNote className="text-center" />}
         <BuyMeCoffeeButton />
         <p className="text-[11px] text-ink-5 text-center">
           FindMyBus · all data stays in your browser

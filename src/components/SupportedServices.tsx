@@ -31,3 +31,24 @@ export function SupportedServices() {
     </div>
   )
 }
+
+/**
+ * One-line variant for places that cannot afford the full list — the add sheet
+ * and the trip-list footer. Same source of truth, no extra vertical cost.
+ */
+export function ServicesNote({ className = '' }: { className?: string }) {
+  const active = SERVICES.filter(s => s.active)
+
+  return (
+    <p className={`text-[11px] leading-relaxed text-ink-4 ${className}`}>
+      <span className="text-ink-3">Works with </span>
+      {active.map((service, i) => (
+        <span key={service.name}>
+          <span className="font-mono text-ink-3">{service.example}</span>
+          {i < active.length - 2 ? ', ' : i === active.length - 2 ? ' or ' : ''}
+        </span>
+      ))}
+      <span> · more operators soon</span>
+    </p>
+  )
+}

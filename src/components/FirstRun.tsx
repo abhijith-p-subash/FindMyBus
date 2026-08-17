@@ -6,13 +6,14 @@ import { SupportedServices } from './SupportedServices'
 
 interface FirstRunProps {
   onAdd: (url: string, name: string) => AddTripResult
+  onStartDemo: () => void
 }
 
 /**
  * First run has no modal — the paste field is the page. A user arriving with a
  * link in the clipboard should be tracking in two taps.
  */
-export function FirstRun({ onAdd }: FirstRunProps) {
+export function FirstRun({ onAdd, onStartDemo }: FirstRunProps) {
   const [value, setValue] = useState('')
   const [error, setError] = useState('')
 
@@ -76,6 +77,13 @@ export function FirstRun({ onAdd }: FirstRunProps) {
                      disabled:bg-line disabled:text-ink-4 disabled:cursor-not-allowed disabled:active:scale-100"
         >
           Start tracking <ArrowRight size={16} strokeWidth={2.5} />
+        </button>
+
+        <button
+          onClick={onStartDemo}
+          className="text-[12px] text-ink-4 hover:text-signal-text transition-colors cursor-pointer"
+        >
+          No link yet? Watch a sample trip →
         </button>
       </div>
 

@@ -141,8 +141,13 @@ export function MapPanel({
     'w-9 h-9 flex items-center justify-center rounded-ctl bg-surface/85 backdrop-blur-md ' +
     'border border-line-strong text-ink-3 hover:text-ink active:scale-95 transition-all cursor-pointer'
 
+  // `isolate z-0` is load-bearing: Leaflet gives its panes and controls z-indexes
+  // up to 1000, and with no stacking context here they escape this element and
+  // paint over the hero card and timeline below.
+  const root = `relative isolate z-0 overflow-hidden bg-surface-3 ${frozen ? 'map-frozen' : ''} ${className}`
+
   return (
-    <div className={`relative overflow-hidden bg-surface-3 ${frozen ? 'map-frozen' : ''} ${className}`}>
+    <div className={root}>
       <div ref={hostRef} className="absolute inset-0" />
 
       {/* On phones the map runs edge to edge and dissolves into the page so the

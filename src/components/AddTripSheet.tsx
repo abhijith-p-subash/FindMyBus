@@ -2,14 +2,13 @@ import { useState, useEffect, useRef } from 'react'
 import { AlertCircle, CheckCircle2 } from 'lucide-react'
 import { parseTrackingKey } from '../utils'
 import { AddTripResult } from '../hooks/useTrips'
+import { ServicesNote } from './SupportedServices'
 
 interface AddTripSheetProps {
   isOpen: boolean
   onClose: () => void
   onAdd: (url: string, name: string) => AddTripResult
 }
-
-const FORMATS = ['bus.trackingo.in', 'trkg.in', 'AB1234']
 
 export function AddTripSheet({ isOpen, onClose, onAdd }: AddTripSheetProps) {
   const [mounted, setMounted] = useState(false)
@@ -140,18 +139,7 @@ export function AddTripSheet({ isOpen, onClose, onAdd }: AddTripSheetProps) {
           />
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          {FORMATS.map(f => (
-            <button
-              key={f}
-              onClick={() => { setUrl(f === 'AB1234' ? f : `${f}/`); inputRef.current?.focus() }}
-              className="px-3 py-2 rounded-chip bg-app border border-line font-mono text-[11px] text-ink-3
-                         hover:border-line-strong hover:text-ink transition-colors cursor-pointer"
-            >
-              {f}
-            </button>
-          ))}
-        </div>
+        <ServicesNote />
 
         <button
           onClick={submit}
