@@ -3,7 +3,7 @@ import { Trip, TripLastKnown } from '../types'
 import { parseTrackingKey } from '../utils'
 
 const STORAGE_KEY = 'bus-tracker-trips-v2'
-const LEGACY_KEY  = 'bus-tracker-trips-v1'
+const LEGACY_KEY = 'bus-tracker-trips-v1'
 
 /** v1 `lastKnown` lacked stop counts and next-stop fields — fill them in rather than drop the trip. */
 function migrateLastKnown(lk: Partial<TripLastKnown> | null): TripLastKnown | null {
@@ -82,29 +82,32 @@ export interface AddTripResult {
 export function useTrips() {
   const [trips, setTrips] = useState<Trip[]>(load)
 
-  const addTrip = useCallback((rawInput: string, name: string): AddTripResult => {
-    const key = parseTrackingKey(rawInput)
-    if (!key) return { success: false, error: 'That isn’t a supported tracking link.' }
+  const addTrip = useCallback(
+    (rawInput: string, name: string): AddTripResult => {
+      const key = parseTrackingKey(rawInput)
+      if (!key) return { success: false, error: 'That isn’t a supported tracking link.' }
 
-    const existing = trips.find(t => t.key === key)
-    if (existing) return { success: false, error: `Already tracking ${key}` }
+      const existing = trips.find(t => t.key === key)
+      if (existing) return { success: false, error: `Already tracking ${key}` }
 
-    const trip: Trip = {
-      key,
-      name: name.trim() || key,
-      originalUrl: rawInput.trim(),
-      addedAt: new Date().toISOString(),
-      lastKnown: null,
-    }
+      const trip: Trip = {
+        key,
+        name: name.trim() || key,
+        originalUrl: rawInput.trim(),
+        addedAt: new Date().toISOString(),
+        lastKnown: null,
+      }
 
-    setTrips(prev => {
-      const next = [trip, ...prev]
-      persist(next)
-      return next
-    })
+      setTrips(prev => {
+        const next = [trip, ...prev]
+        persist(next)
+        return next
+      })
 
-    return { success: true, trip }
-  }, [trips])
+      return { success: true, trip }
+    },
+    [trips],
+  )
 
   const removeTrip = useCallback((key: string) => {
     setTrips(prev => {
@@ -113,7 +116,9 @@ export function useTrips() {
       return next
     })
     // Drop the pinned stop too, otherwise it lingers forever.
-    try { localStorage.removeItem(`bus-tracker-mystop-${key}`) } catch {}
+    try {
+      localStorage.removeItem(`bus-tracker-mystop-${key}`)
+    } catch {}
   }, [])
 
   const updateLastKnown = useCallback((key: string, lastKnown: TripLastKnown) => {

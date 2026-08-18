@@ -4,6 +4,8 @@ import { Logo } from './Logo'
 import { TripCard } from './TripCard'
 import { EcoToggle } from './EcoToggle'
 import { InstallCard } from './InstallCard'
+import { BuyMeCoffeeButton } from './BuyMeCoffeeButton'
+import { SampleTripLink } from '../demo/SampleTripLink'
 
 interface TripRailProps {
   trips: Trip[]
@@ -11,6 +13,7 @@ interface TripRailProps {
   onOpenTrip: (trip: Trip) => void
   onRemoveTrip: (key: string) => void
   onAdd: () => void
+  onStartDemo: () => void
   dataSaver: boolean
   onToggleDataSaver: () => void
   isDark: boolean
@@ -22,12 +25,22 @@ interface TripRailProps {
  * own, so this is hidden rather than duplicated.
  */
 export function TripRail({
-  trips, activeKey, onOpenTrip, onRemoveTrip, onAdd,
-  dataSaver, onToggleDataSaver, isDark, onToggleTheme,
+  trips,
+  activeKey,
+  onOpenTrip,
+  onRemoveTrip,
+  onAdd,
+  onStartDemo,
+  dataSaver,
+  onToggleDataSaver,
+  isDark,
+  onToggleTheme,
 }: TripRailProps) {
   return (
-    <aside className="hidden lg:flex flex-col w-[340px] xl:w-[380px] shrink-0 h-dvh sticky top-0
-                      border-r border-line-soft bg-app">
+    <aside
+      className="hidden lg:flex flex-col w-[340px] xl:w-[380px] shrink-0 h-dvh sticky top-0
+                      border-r border-line-soft bg-app pt-safe"
+    >
       <div className="px-5 h-16 flex items-center justify-between shrink-0">
         <Logo />
         <div className="flex items-center gap-2">
@@ -83,8 +96,12 @@ export function TripRail({
       </div>
 
       <div className="px-4 pb-4 flex flex-col gap-2.5 shrink-0">
+        <SampleTripLink onStart={onStartDemo} variant="card" />
         <InstallCard />
         <EcoToggle enabled={dataSaver} onToggle={onToggleDataSaver} />
+        <div className="flex justify-center pt-1">
+          <BuyMeCoffeeButton />
+        </div>
       </div>
     </aside>
   )

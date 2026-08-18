@@ -1,6 +1,10 @@
 import { Stop, ApiResponse, TripLastKnown, TripStatus, Trip } from './types'
 
 // ─── URL / Key parsing ────────────────────────────────────────────────────────
+//
+// Codes in examples throughout this repo (AB1234, CD5678) are illustrative and
+// resolve to nothing. Never commit a real tracking code: it is a live handle on
+// a real vehicle, and publishing one hands anyone the ability to follow it.
 
 export function parseTrackingKey(input: string): string | null {
   const trimmed = input.trim()
@@ -50,7 +54,7 @@ export function dedupeStops(stops: Stop[], currentId?: number): Stop[] {
       seen.set(key, stop)
     } else {
       const keepNew =
-        stop.id === currentId ||                             // always keep the current stop
+        stop.id === currentId || // always keep the current stop
         (stop.arrival_time && !existing.arrival_time && existing.id !== currentId)
       if (keepNew) seen.set(key, stop)
     }
@@ -60,8 +64,7 @@ export function dedupeStops(stops: Stop[], currentId?: number): Stop[] {
 
 // ─── Route helpers ────────────────────────────────────────────────────────────
 
-const cleanName = (s: string) =>
-  s.replace(/\s*[\(\[][^\)\]]*[\)\]]\s*$/, '').trim()
+const cleanName = (s: string) => s.replace(/\s*[([][^)\]]*[)\]]\s*$/, '').trim()
 
 export const stopName = (stop: Stop | null | undefined) =>
   stop ? cleanName(stop.service_place_name) : ''
@@ -97,7 +100,9 @@ export function computeLastKnown(data: ApiResponse): TripLastKnown {
     stopIndex: idx === -1 ? 0 : idx + 1,
     stopCount: stops.length,
     nextStop: stopName(next),
-    nextEta: next ? formatClock(next.expected_time || next.arrival_time || next.scheduled_time) : '',
+    nextEta: next
+      ? formatClock(next.expected_time || next.arrival_time || next.scheduled_time)
+      : '',
   }
 }
 
@@ -108,9 +113,12 @@ export type StopStatus = 'ontime' | 'delayed' | 'skipped' | 'upcoming'
 export function getStopStatus(color: Stop['color'], skipped: boolean): StopStatus {
   if (skipped) return 'skipped'
   switch (color) {
-    case 'color_green': return 'ontime'
-    case 'color_yellow': return 'delayed'
-    default: return 'upcoming'
+    case 'color_green':
+      return 'ontime'
+    case 'color_yellow':
+      return 'delayed'
+    default:
+      return 'upcoming'
   }
 }
 
@@ -136,7 +144,10 @@ export function formatClock(timeStr: string): string {
 
 export function formatLastUpdated(date: Date): string {
   return date.toLocaleTimeString('en-IN', {
-    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
   })
 }
 

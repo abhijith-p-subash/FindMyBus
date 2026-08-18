@@ -7,6 +7,8 @@ import { InstallCard } from './InstallCard'
 import { EcoToggle } from './EcoToggle'
 import { ServicesNote } from './SupportedServices'
 import { BuyMeCoffeeButton } from './BuyMeCoffeeButton'
+import { AppFooter } from './AppFooter'
+import { SampleTripLink } from '../demo/SampleTripLink'
 
 interface TripListScreenProps {
   trips: Trip[]
@@ -23,8 +25,17 @@ interface TripListScreenProps {
 }
 
 export function TripListScreen({
-  trips, onOpenTrip, onRemoveTrip, onAdd, onQuickAdd, onStartDemo,
-  dataSaver, onToggleDataSaver, isDark, onToggleTheme, animClass = '',
+  trips,
+  onOpenTrip,
+  onRemoveTrip,
+  onAdd,
+  onQuickAdd,
+  onStartDemo,
+  dataSaver,
+  onToggleDataSaver,
+  isDark,
+  onToggleTheme,
+  animClass = '',
 }: TripListScreenProps) {
   const empty = trips.length === 0
 
@@ -58,20 +69,24 @@ export function TripListScreen({
               ))}
             </div>
 
-            <InstallCard />
             <EcoToggle enabled={dataSaver} onToggle={onToggleDataSaver} />
           </div>
         )}
+
+        <div className="mt-5">
+          <InstallCard />
+        </div>
       </main>
 
       <footer className="w-full max-w-2xl mx-auto px-5 pb-safe pt-2 flex flex-col items-center gap-3">
         {/* First run already shows the full "Works with" list, so only repeat it
             here once the user has trips and that screen is gone. */}
         {!empty && <ServicesNote className="text-center" />}
-        <BuyMeCoffeeButton />
-        <p className="text-[11px] text-ink-5 text-center">
-          FindMyBus · all data stays in your browser
-        </p>
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+          <BuyMeCoffeeButton />
+          {!empty && <SampleTripLink onStart={onStartDemo} />}
+        </div>
+        <AppFooter prefix="FindMyBus" />
       </footer>
     </div>
   )

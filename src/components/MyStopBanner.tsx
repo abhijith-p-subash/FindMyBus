@@ -21,10 +21,11 @@ export function MyStopBanner({ stop, stopsAway, onClear, className = '' }: MySto
   const passed = stopsAway < 0
   const imminent = !passed && stopsAway <= 2
 
-  const distance =
-    passed ? 'Already passed'
-    : stopsAway === 0 ? 'Bus is here'
-    : `${stopsAway} stop${stopsAway === 1 ? '' : 's'} away`
+  const distance = passed
+    ? 'Already passed'
+    : stopsAway === 0
+      ? 'Bus is here'
+      : `${stopsAway} stop${stopsAway === 1 ? '' : 's'} away`
 
   return (
     <section
@@ -48,7 +49,8 @@ export function MyStopBanner({ stop, stopsAway, onClear, className = '' }: MySto
           {stop.service_place_name.trim()}
         </h3>
         <p className="text-[12px] text-ink-3 truncate">
-          {distance}{eta ? ` · arrives ${eta}` : ''}
+          {distance}
+          {eta ? ` · arrives ${eta}` : ''}
         </p>
       </div>
 

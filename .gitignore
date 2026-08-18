@@ -43,3 +43,9 @@ build
 # OS
 .DS_Store
 Thumbs.db
+
+# ESLint cache
+.eslintcache
+
+# Generated helper output
+scripts/.splash-tags.html

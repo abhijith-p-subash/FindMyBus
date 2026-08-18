@@ -15,6 +15,7 @@ import { StaleBanner } from './StaleBanner'
 import { CompletedState } from './CompletedState'
 import { ErrorState } from './ErrorState'
 import { LoadingSkeleton } from './LoadingSkeleton'
+import { AppFooter } from './AppFooter'
 import { DemoBanner } from '../demo/DemoBanner'
 import { isDemoKey } from '../demo/demoApi'
 
@@ -34,9 +35,17 @@ interface TrackingScreenProps {
 }
 
 export function TrackingScreen({
-  trip, onBack, onTripCompleted, onUpdateLastKnown,
-  dataSaver, onToggleDataSaver, refreshInterval,
-  onAddReal, animClass, isDark, onToggleTheme,
+  trip,
+  onBack,
+  onTripCompleted,
+  onUpdateLastKnown,
+  dataSaver,
+  onToggleDataSaver,
+  refreshInterval,
+  onAddReal,
+  animClass,
+  isDark,
+  onToggleTheme,
 }: TrackingScreenProps) {
   const isDemo = isDemoKey(trip.key)
   const timelineRef = useRef<StopTimelineHandle>(null)
@@ -45,15 +54,23 @@ export function TrackingScreen({
   const online = useOnline()
 
   const {
-    data, loading, error, completed, completedMessage,
-    lastUpdated, countdown, refresh, delayTrend, stale,
+    data,
+    loading,
+    error,
+    completed,
+    completedMessage,
+    lastUpdated,
+    countdown,
+    refresh,
+    delayTrend,
+    stale,
   } = useBusTracker(trip.key, {
     onData: apiData => onUpdateLastKnown(trip.key, computeLastKnown(apiData)),
     refreshInterval,
   })
 
   const stops = data ? dedupeStops(data.eta_map_data, data.current_sp_id) : []
-  const myStop = myStopId !== null ? stops.find(s => s.id === myStopId) ?? null : null
+  const myStop = myStopId !== null ? (stops.find(s => s.id === myStopId) ?? null) : null
   const currentIdx = data ? stops.findIndex(s => s.id === data.current_sp_id) : -1
   const myStopIdx = myStopId !== null ? stops.findIndex(s => s.id === myStopId) : -1
   const stopsAway = myStopIdx >= 0 && currentIdx >= 0 ? myStopIdx - currentIdx : 0
@@ -64,18 +81,22 @@ export function TrackingScreen({
   const subtitle = completed
     ? 'trip finished'
     : degraded
-    ? 'reconnecting'
-    : lastUpdated
-    ? `next update in ${countdown}s`
-    : 'connecting…'
+      ? 'reconnecting'
+      : lastUpdated
+        ? `next update in ${countdown}s`
+        : 'connecting…'
 
   // ── Completion stats, read off the last payload before the 302 arrived ──
   const first = stops[0]
   const last = stops[stops.length - 1]
   const startAt = first ? parseTimeToday(first.scheduled_time || first.arrival_time) : null
-  const endAt = last ? parseTimeToday(last.expected_time || last.arrival_time || last.scheduled_time) : null
+  const endAt = last
+    ? parseTimeToday(last.expected_time || last.arrival_time || last.scheduled_time)
+    : null
   const durationMins =
-    startAt && endAt ? Math.max(0, Math.round((endAt.getTime() - startAt.getTime()) / 60_000)) : null
+    startAt && endAt
+      ? Math.max(0, Math.round((endAt.getTime() - startAt.getTime()) / 60_000))
+      : null
   const finalDelay = last?.delay_time ?? null
 
   return (
@@ -103,7 +124,10 @@ export function TrackingScreen({
               stops={stops.length}
               durationMins={durationMins}
               finalDelay={finalDelay}
-              onDone={() => { onTripCompleted(trip.key); onBack() }}
+              onDone={() => {
+                onTripCompleted(trip.key)
+                onBack()
+              }}
               onKeep={isDemo ? onAddReal : onBack}
               keepLabel={isDemo ? 'Track a real bus' : 'Keep on list'}
             />
@@ -125,7 +149,9 @@ export function TrackingScreen({
               speed={data.current_status_details.details.speed}
               location={data.current_status_details.details.location}
               frozen={degraded}
-              frozenAt={lastUpdated ? formatClock(lastUpdated.toTimeString().slice(0, 5)) : undefined}
+              frozenAt={
+                lastUpdated ? formatClock(lastUpdated.toTimeString().slice(0, 5)) : undefined
+              }
               variant="bleed"
               className="h-[300px] sm:h-[340px] lg:h-[380px] lg:rounded-card lg:border lg:border-line
                          lg:max-w-2xl lg:mx-auto"
@@ -144,11 +170,7 @@ export function TrackingScreen({
               )}
 
               {myStop && (
-                <MyStopBanner
-                  stop={myStop}
-                  stopsAway={stopsAway}
-                  onClear={() => setMyStop(null)}
-                />
+                <MyStopBanner stop={myStop} stopsAway={stopsAway} onClear={() => setMyStop(null)} />
               )}
 
               <HeroCard
@@ -188,9 +210,9 @@ export function TrackingScreen({
         </div>
       )}
 
-      <p className="text-center text-[11px] text-ink-5 pb-safe pt-4">
-        {isDemo ? 'Sample trip' : trip.key} · all data stays in your browser
-      </p>
+      <div className="pb-safe pt-4">
+        <AppFooter prefix={isDemo ? 'Sample trip' : trip.key} />
+      </div>
     </div>
   )
 }

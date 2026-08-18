@@ -8,6 +8,8 @@ still see the app work.
 Entry points, all landing on `/track/DEMO`:
 
 - **First run** — "No link yet? Watch a sample trip →" under the paste field
+- **Mobile trip list** — a footer link, so it stays reachable once you have trips
+- **Desktop rail** — a "Watch a sample trip" card above the install and eco rows
 - **Desktop placeholder** — a "Try a sample trip" button beside "Add a bus"
 - Typing `DEMO` into the add field also works, and is intercepted so it does not save a trip
 
@@ -43,7 +45,8 @@ demo actually polls at 5s — a known cosmetic mismatch, not a bug in the real p
 | --- | --- |
 | `demoApi.ts` | Route data, simulation state, `demoFetch()`, `makeDemoTrip()` |
 | `DemoBanner.tsx` | The "Sample trip" banner with its two exits |
+| `SampleTripLink.tsx` | Shared entry point, `quiet` and `card` variants |
 
 Call sites: `useBusTracker.ts` (fetch swap), `TrackingScreen.tsx` (banner + completion labels),
 `App.tsx` (`startDemo`, synthetic trip, `handleAdd` interception), `FirstRun.tsx` (entry link),
-`TripListScreen.tsx` (passes `onStartDemo` through).
+`TripListScreen.tsx` (footer link + passes `onStartDemo` through), `TripRail.tsx` (rail card).

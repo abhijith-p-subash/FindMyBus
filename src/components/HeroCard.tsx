@@ -2,7 +2,12 @@ import { TrendingDown, TrendingUp, Minus, Zap, Leaf } from 'lucide-react'
 import { ApiResponse } from '../types'
 import { DelayTrend } from '../hooks/useBusTracker'
 import {
-  dedupeStops, computeProgress, findNextStop, stopName, formatClock, minutesUntil,
+  dedupeStops,
+  computeProgress,
+  findNextStop,
+  stopName,
+  formatClock,
+  minutesUntil,
 } from '../utils'
 
 interface HeroCardProps {
@@ -19,7 +24,12 @@ interface HeroCardProps {
  * two figures here: which stop is next, and how long until it.
  */
 export function HeroCard({
-  data, delayTrend, stale, dataSaver, onToggleDataSaver, className = '',
+  data,
+  delayTrend,
+  stale,
+  dataSaver,
+  onToggleDataSaver,
+  className = '',
 }: HeroCardProps) {
   const stops = dedupeStops(data.eta_map_data, data.current_sp_id)
   const currentStop = data.eta_map_data.find(s => s.id === data.current_sp_id)
@@ -29,8 +39,12 @@ export function HeroCard({
   const progress = computeProgress(data)
   const delay = currentStop?.delay_time ?? null
 
-  const nextEta = next ? formatClock(next.expected_time || next.arrival_time || next.scheduled_time) : ''
-  const mins = next ? minutesUntil(next.expected_time || next.arrival_time || next.scheduled_time) : null
+  const nextEta = next
+    ? formatClock(next.expected_time || next.arrival_time || next.scheduled_time)
+    : ''
+  const mins = next
+    ? minutesUntil(next.expected_time || next.arrival_time || next.scheduled_time)
+    : null
   const minsLabel = mins === null ? '—' : mins <= 0 ? 'now' : String(mins)
 
   return (
@@ -50,7 +64,8 @@ export function HeroCard({
             className={`font-mono font-semibold text-[40px] leading-none tracking-[-0.04em] tnum
                         ${stale ? 'text-ink-3' : 'text-signal-text'}`}
           >
-            {stale && mins !== null ? '~' : ''}{minsLabel}
+            {stale && mins !== null ? '~' : ''}
+            {minsLabel}
           </span>
           <span className="eyebrow">{stale ? 'est. min' : 'min away'}</span>
         </div>
@@ -65,15 +80,19 @@ export function HeroCard({
           />
         </div>
         <div className="flex items-center justify-between font-mono text-[11px] text-ink-4 tnum">
-          <span>Stop {idx === -1 ? '—' : idx + 1} / {stops.length}</span>
+          <span>
+            Stop {idx === -1 ? '—' : idx + 1} / {stops.length}
+          </span>
           <span>{progress}% of route</span>
         </div>
       </div>
 
       <div className="flex gap-2">
         <Tile label="Delay">
-          <span className={`font-mono font-semibold text-lg leading-none tnum
-                            ${delay && delay > 0 ? 'text-delay-text' : 'text-go-text'}`}>
+          <span
+            className={`font-mono font-semibold text-lg leading-none tnum
+                            ${delay && delay > 0 ? 'text-delay-text' : 'text-go-text'}`}
+          >
             {delay && delay > 0 ? `+${delay}m` : '0m'}
           </span>
           <TrendNote trend={delayTrend} />
@@ -88,13 +107,30 @@ export function HeroCard({
           </span>
         </Tile>
 
-        <Tile label="Mode" onClick={onToggleDataSaver}
-              title={dataSaver ? 'Eco — refreshes every 60s. Tap for live.' : 'Live — refreshes every 30s. Tap for eco.'}>
+        <Tile
+          label="Mode"
+          onClick={onToggleDataSaver}
+          title={
+            dataSaver
+              ? 'Eco — refreshes every 60s. Tap for live.'
+              : 'Live — refreshes every 30s. Tap for eco.'
+          }
+        >
           <span className="font-mono font-semibold text-lg leading-none text-ink tnum">
             {dataSaver ? '60s' : '30s'}
           </span>
-          <span className={`text-[10px] flex items-center gap-1 ${dataSaver ? 'text-go-text' : 'text-signal-text'}`}>
-            {dataSaver ? <><Leaf size={9} /> eco</> : <><Zap size={9} /> live</>}
+          <span
+            className={`text-[10px] flex items-center gap-1 ${dataSaver ? 'text-go-text' : 'text-signal-text'}`}
+          >
+            {dataSaver ? (
+              <>
+                <Leaf size={9} /> eco
+              </>
+            ) : (
+              <>
+                <Zap size={9} /> live
+              </>
+            )}
           </span>
         </Tile>
       </div>
@@ -131,8 +167,8 @@ function TrendNote({ trend }: { trend: DelayTrend }) {
   if (!trend) return <span className="text-[10px] text-ink-4">—</span>
   const map = {
     improving: { icon: <TrendingDown size={9} />, text: 'improving', cls: 'text-go-text' },
-    worsening: { icon: <TrendingUp size={9} />,   text: 'growing',   cls: 'text-delay-text' },
-    stable:    { icon: <Minus size={9} />,        text: 'stable',    cls: 'text-ink-4' },
+    worsening: { icon: <TrendingUp size={9} />, text: 'growing', cls: 'text-delay-text' },
+    stable: { icon: <Minus size={9} />, text: 'stable', cls: 'text-ink-4' },
   }[trend]
   return (
     <span className={`text-[10px] flex items-center gap-1 ${map.cls}`}>

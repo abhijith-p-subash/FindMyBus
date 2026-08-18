@@ -12,15 +12,23 @@ that has a colour, a radius, or an animation.
 ## Commands
 
 ```bash
-npm run dev      # Vite dev server; proxies /api → bus.trackingo.in
-npm run build    # tsc gate, then vite build → dist/
-npm run preview  # serve dist/ locally
+npm run dev           # Vite dev server; proxies /api → bus.trackingo.in
+npm run build         # tsc gate, then vite build → dist/
+npm run preview       # serve dist/ locally
+npm run lint          # ESLint (flat config)
+npm run format        # apply Prettier
+npm run typecheck     # tsc --noEmit
+npm run verify        # everything CI runs: lint + format:check + typecheck + build
 ```
 
-There is **no test suite and no linter**. `// eslint-disable-line` comments in `useBusTracker.ts`
-and `MapPanel.tsx` are inert documentation of intentional dependency-array omissions — ESLint is not
-installed. `tsc` is the only automated check; `strict`, `noUnusedLocals`, and `noUnusedParameters`
-are on, so an unused import fails the build.
+There is **no test suite yet**. `npm run verify` is the gate, and `.github/workflows/ci.yml` runs
+exactly those four steps on pushes and PRs to `main` and `development`. `tsconfig` has `strict`,
+`noUnusedLocals`, and `noUnusedParameters` on, so an unused import fails the build.
+
+`react-hooks/set-state-in-effect` is switched off for `App.tsx`, `AddTripSheet.tsx`, and
+`useBusTracker.ts` in `eslint.config.js` — those three deliberately sync React state from outside
+(a URL query param, a two-frame enter transition, a reset when the tracked key changes), and the
+rule fires on every `setState` in the block rather than once. New files still get the rule.
 
 ## Stack
 
@@ -114,6 +122,18 @@ Callbacks are held in refs so inline arrow props do not retrigger it. The countd
 dynamically imported, and separate effects handle position, frozen-marker swap, and a
 `ResizeObserver` → `invalidateSize()` (needed because the panel changes size at the `lg` breakpoint).
 Never let the init effect re-run.
+
+**Top-anchored bars must pay `env(safe-area-inset-top)` themselves.** Installed on iOS the web
+view can be laid out under the status bar, and the clock and battery then sit on top of the header.
+`ListHeader`, `TrackHeader`, and `TripRail` carry `pt-safe` / `pt-safe-2` for this. Related:
+`apple-mobile-web-app-status-bar-style` is deliberately `default`, **not** `black-translucent` —
+translucent forces white status-bar glyphs at all times, which vanish against the light theme's
+near-white header.
+
+**`theme-color` is written by `useTheme`, not by a media query.** The theme is a user choice stored
+in `localStorage`, so it does not track `prefers-color-scheme`; a `media` attribute on the meta tag
+gives the installed app a status bar from the wrong theme. There is one `<meta name="theme-color">`
+and the hook keeps its content in step with `--fmb-bg`.
 
 **Leaflet escapes its container without a stacking context.** `MapPanel`'s root carries
 `isolate z-0` because Leaflet assigns its panes and controls z-indexes up to 1000; with

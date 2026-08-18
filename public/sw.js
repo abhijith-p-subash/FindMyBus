@@ -11,30 +11,44 @@
  *   tiles  — OpenStreetMap imagery, capped so it cannot grow without bound.
  */
 
-const VERSION = 'v1'
-const SHELL  = `fmb-shell-${VERSION}`
+const VERSION = 'v2'
+const SHELL = `fmb-shell-${VERSION}`
 const ASSETS = `fmb-assets-${VERSION}`
-const API    = `fmb-api-${VERSION}`
-const TILES  = `fmb-tiles-${VERSION}`
+const API = `fmb-api-${VERSION}`
+const TILES = `fmb-tiles-${VERSION}`
 
-const SHELL_URLS = ['/', '/site.webmanifest', '/icon.svg', '/icon-192.png', '/icon-512.png']
+const SHELL_URLS = [
+  '/',
+  '/site.webmanifest',
+  '/mark.svg',
+  '/icon.svg',
+  '/icon-192.png',
+  '/icon-512.png',
+]
 const TILE_LIMIT = 220
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(SHELL)
-      .then(cache => cache.addAll(SHELL_URLS))
-      .catch(() => undefined) // a missing optional asset must not abort install
-      .then(() => self.skipWaiting())
+    caches
+      .open(SHELL)
+      // Deliberately not addAll(): that is atomic, so one 404 would reject the
+      // whole batch and leave the shell cache empty — offline would break with
+      // no visible symptom. Each entry is cached on its own instead.
+      .then(cache =>
+        Promise.allSettled(SHELL_URLS.map(url => cache.add(new Request(url, { cache: 'reload' })))),
+      )
+      .catch(() => undefined)
+      .then(() => self.skipWaiting()),
   )
 })
 
 self.addEventListener('activate', event => {
   const keep = new Set([SHELL, ASSETS, API, TILES])
   event.waitUntil(
-    caches.keys()
+    caches
+      .keys()
       .then(names => Promise.all(names.filter(n => !keep.has(n)).map(n => caches.delete(n))))
-      .then(() => self.clients.claim())
+      .then(() => self.clients.claim()),
   )
 })
 
@@ -101,8 +115,11 @@ self.addEventListener('fetch', event => {
   if (url.hostname.endsWith('tile.openstreetmap.org')) {
     event.respondWith(
       cacheFirst(request, TILES)
-        .then(res => { trim(TILES, TILE_LIMIT); return res })
-        .catch(() => Response.error())
+        .then(res => {
+          trim(TILES, TILE_LIMIT)
+          return res
+        })
+        .catch(() => Response.error()),
     )
     return
   }
@@ -125,6 +142,6 @@ self.addEventListener('fetch', event => {
   }
 
   event.respondWith(
-    fetch(request).catch(() => caches.match(request).then(r => r || Response.error()))
+    fetch(request).catch(() => caches.match(request).then(r => r || Response.error())),
   )
 })

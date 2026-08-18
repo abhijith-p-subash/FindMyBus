@@ -8,11 +8,14 @@ export function useMyStop(tripKey: string) {
     return v !== null ? parseInt(v, 10) : null
   })
 
-  const setMyStop = useCallback((id: number | null) => {
-    setMyStopIdState(id)
-    if (id === null) localStorage.removeItem(storageKey)
-    else localStorage.setItem(storageKey, String(id))
-  }, [storageKey])
+  const setMyStop = useCallback(
+    (id: number | null) => {
+      setMyStopIdState(id)
+      if (id === null) localStorage.removeItem(storageKey)
+      else localStorage.setItem(storageKey, String(id))
+    },
+    [storageKey],
+  )
 
   return { myStopId, setMyStop }
 }

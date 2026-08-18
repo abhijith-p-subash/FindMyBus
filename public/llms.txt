@@ -15,6 +15,17 @@ FindMyBus (findmybus.abhijithpsubash.com) is a free, privacy-first web applicati
 - Installs as a progressive web app and shows the last known position while offline
 - Allows users to share a direct tracking link with others
 
+## Relationship to Trackingo — important
+
+FindMyBus does not track buses and holds no vehicle data. Bus operators track their vehicles using
+Trackingo, a product of Bitla Software Pvt. Ltd. The operator gives the passenger a tracking code;
+FindMyBus is an alternative front-end that renders that same trip more legibly, requesting one trip
+at a time for a code the user supplied.
+
+FindMyBus is an independent, unofficial project and is NOT affiliated with, endorsed by, or
+connected to Bitla Software Pvt. Ltd. or Trackingo. Live bus data is provided by and belongs to
+Bitla Software. Trademarks are used descriptively only, to state compatibility.
+
 ## Supported bus services
 
 - **trackingo.in** — bus.trackingo.in (primary supported service)
@@ -43,9 +54,16 @@ Anyone who opens this link will immediately see live tracking for that bus, even
 
 ## Privacy
 
-- Zero data collection — FindMyBus does not store, transmit, or log any user data
-- All trip history is saved only in the user's browser localStorage
-- No sign-up, no cookies, no tracking
+- Saved trips, pinned stops and theme live only in the user's browser localStorage and are never
+  transmitted anywhere
+- No accounts, no cookies, no analytics, no third-party scripts, no data sales
+- Live tracking requests are proxied through the FindMyBus host (Netlify) to reach trackingo.in,
+  because a browser cannot call it directly without hitting CORS. That proxy necessarily sees the
+  request — IP address, user agent, and the tracking code in the URL — and standard access logs are
+  retained by the host. FindMyBus does not read them, profile users, or retain anything itself, but
+  it would be inaccurate to claim requests never reach a FindMyBus server.
+- Map tiles are fetched by the browser directly from OpenStreetMap, which sees the IP for the same
+  unavoidable reason.
 
 ## Technical
 
