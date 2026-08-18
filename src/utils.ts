@@ -268,3 +268,102 @@ export function formatDurationTight(totalMinutes: number): string {
   if (h > 0) return `${h}h${String(m).padStart(2, '0')}`
   return `${m}m`
 }
+
+// ─── Dead reckoning ───────────────────────────────────────────────────────────
+//
+// The upstream reports a position every 30 s and a speed, but nothing in
+// between, so a marker driven straight from it teleports twice a minute. These
+// let the map carry the bus forward along its last known heading until the next
+// fix lands. See doc/PROPOSALS.md §B0.
+
+export type LatLng = [number, number]
+
+const R = 6_371_000 // mean earth radius, metres
+const rad = (deg: number) => (deg * Math.PI) / 180
+const deg = (r: number) => (r * 180) / Math.PI
+
+/** Great-circle distance in metres. */
+export function distanceM([lat1, lon1]: LatLng, [lat2, lon2]: LatLng): number {
+  const dLat = rad(lat2 - lat1)
+  const dLon = rad(lon2 - lon1)
+  const a =
+    Math.sin(dLat / 2) ** 2 + Math.cos(rad(lat1)) * Math.cos(rad(lat2)) * Math.sin(dLon / 2) ** 2
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(a)))
+}
+
+/** Initial bearing in degrees clockwise from north. */
+export function bearingDeg([lat1, lon1]: LatLng, [lat2, lon2]: LatLng): number {
+  const dLon = rad(lon2 - lon1)
+  const y = Math.sin(dLon) * Math.cos(rad(lat2))
+  const x =
+    Math.cos(rad(lat1)) * Math.sin(rad(lat2)) -
+    Math.sin(rad(lat1)) * Math.cos(rad(lat2)) * Math.cos(dLon)
+  return (deg(Math.atan2(y, x)) + 360) % 360
+}
+
+/** Move `metres` from a point along a bearing. */
+export function project([lat, lon]: LatLng, bearing: number, metres: number): LatLng {
+  const d = metres / R
+  const br = rad(bearing)
+  const lat1 = rad(lat)
+  const lon1 = rad(lon)
+  const lat2 = Math.asin(Math.sin(lat1) * Math.cos(d) + Math.cos(lat1) * Math.sin(d) * Math.cos(br))
+  const lon2 =
+    lon1 +
+    Math.atan2(
+      Math.sin(br) * Math.sin(d) * Math.cos(lat1),
+      Math.cos(d) - Math.sin(lat1) * Math.sin(lat2),
+    )
+  return [deg(lat2), ((deg(lon2) + 540) % 360) - 180]
+}
+
+/** Shortest signed angle between two bearings, so rotation never takes the long way. */
+export function shortestTurn(from: number, to: number): number {
+  return ((((to - from) % 360) + 540) % 360) - 180
+}
+
+export const kmhToMs = (kmh: number) => (kmh * 1000) / 3600
+
+// ─── Learned route geometry ───────────────────────────────────────────────────
+//
+// The upstream gives no coordinates for stops and no route shape, so the only
+// way to know where the road actually goes is to remember where the bus has
+// been. Breadcrumbs accumulate per trip key across journeys; once a corridor is
+// known, the marker can follow it instead of cutting straight across bends.
+
+/** Index of the stored point closest to `p`. -1 for an empty path. */
+export function nearestIndex(path: LatLng[], p: LatLng): number {
+  let best = -1
+  let bestD = Infinity
+  for (let i = 0; i < path.length; i++) {
+    const d = distanceM(path[i], p)
+    if (d < bestD) {
+      bestD = d
+      best = i
+    }
+  }
+  return best
+}
+
+/** Cumulative distance along a path, and its total. */
+export function pathLengths(path: LatLng[]): { cum: number[]; total: number } {
+  const cum = [0]
+  for (let i = 1; i < path.length; i++) cum.push(cum[i - 1] + distanceM(path[i - 1], path[i]))
+  return { cum, total: cum[cum.length - 1] ?? 0 }
+}
+
+/** Position at `u` (0–1) of the way along a path, measured by distance travelled. */
+export function walkPath(path: LatLng[], cum: number[], u: number): LatLng {
+  const total = cum[cum.length - 1]
+  if (path.length < 2 || total === 0) return path[0]
+  const want = Math.min(Math.max(u, 0), 1) * total
+
+  let i = 1
+  while (i < cum.length - 1 && cum[i] < want) i++
+
+  const segLen = cum[i] - cum[i - 1]
+  const f = segLen === 0 ? 0 : (want - cum[i - 1]) / segLen
+  const a = path[i - 1]
+  const b = path[i]
+  return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]
+}

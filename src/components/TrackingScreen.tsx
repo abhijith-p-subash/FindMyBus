@@ -1,10 +1,11 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Navigation } from 'lucide-react'
 import { Trip } from '../types'
 import { useBusTracker } from '../hooks/useBusTracker'
 import { useShare } from '../hooks/useShare'
 import { useMyStop } from '../hooks/useMyStop'
 import { useOnline } from '../hooks/useOnline'
+import { useRoutePath } from '../hooks/useRoutePath'
 import { computeLastKnown, dedupeStops, formatClock, parseTimeToday } from '../utils'
 import { TrackHeader } from './Header'
 import { MapPanel } from './MapPanel'
@@ -52,6 +53,7 @@ export function TrackingScreen({
   const { share, copied, shareViaWhatsApp } = useShare(trip.key, trip.name)
   const { myStopId, setMyStop } = useMyStop(trip.key)
   const online = useOnline()
+  const { pathRef, record } = useRoutePath(trip.key)
 
   const {
     data,
@@ -68,6 +70,12 @@ export function TrackingScreen({
     onData: apiData => onUpdateLastKnown(trip.key, computeLastKnown(apiData)),
     refreshInterval,
   })
+
+  // Remember where the bus has been so the map can follow the road next time.
+  const fix = data?.current_status_details.lat_long
+  useEffect(() => {
+    if (fix) record([fix[0], fix[1]])
+  }, [fix, record])
 
   const stops = data ? dedupeStops(data.eta_map_data, data.current_sp_id) : []
   const myStop = myStopId !== null ? (stops.find(s => s.id === myStopId) ?? null) : null
@@ -152,6 +160,7 @@ export function TrackingScreen({
               frozenAt={
                 lastUpdated ? formatClock(lastUpdated.toTimeString().slice(0, 5)) : undefined
               }
+              routePathRef={pathRef}
               variant="bleed"
               className="h-[300px] sm:h-[340px] lg:h-[380px] lg:rounded-card lg:border lg:border-line
                          lg:max-w-2xl lg:mx-auto"
