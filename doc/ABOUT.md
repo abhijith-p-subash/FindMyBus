@@ -123,6 +123,18 @@ dynamically imported, and separate effects handle position, frozen-marker swap, 
 `ResizeObserver` → `invalidateSize()` (needed because the panel changes size at the `lg` breakpoint).
 Never let the init effect re-run.
 
+**Top-anchored bars must pay `env(safe-area-inset-top)` themselves.** Installed on iOS the web
+view can be laid out under the status bar, and the clock and battery then sit on top of the header.
+`ListHeader`, `TrackHeader`, and `TripRail` carry `pt-safe` / `pt-safe-2` for this. Related:
+`apple-mobile-web-app-status-bar-style` is deliberately `default`, **not** `black-translucent` —
+translucent forces white status-bar glyphs at all times, which vanish against the light theme's
+near-white header.
+
+**`theme-color` is written by `useTheme`, not by a media query.** The theme is a user choice stored
+in `localStorage`, so it does not track `prefers-color-scheme`; a `media` attribute on the meta tag
+gives the installed app a status bar from the wrong theme. There is one `<meta name="theme-color">`
+and the hook keeps its content in step with `--fmb-bg`.
+
 **Leaflet escapes its container without a stacking context.** `MapPanel`'s root carries
 `isolate z-0` because Leaflet assigns its panes and controls z-indexes up to 1000; with
 `position: relative` alone those compete with the app's own layers and paint over the hero card,

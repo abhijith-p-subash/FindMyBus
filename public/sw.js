@@ -11,21 +11,33 @@
  *   tiles  — OpenStreetMap imagery, capped so it cannot grow without bound.
  */
 
-const VERSION = 'v1'
+const VERSION = 'v2'
 const SHELL = `fmb-shell-${VERSION}`
 const ASSETS = `fmb-assets-${VERSION}`
 const API = `fmb-api-${VERSION}`
 const TILES = `fmb-tiles-${VERSION}`
 
-const SHELL_URLS = ['/', '/site.webmanifest', '/icon.svg', '/icon-192.png', '/icon-512.png']
+const SHELL_URLS = [
+  '/',
+  '/site.webmanifest',
+  '/mark.svg',
+  '/icon.svg',
+  '/icon-192.png',
+  '/icon-512.png',
+]
 const TILE_LIMIT = 220
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches
       .open(SHELL)
-      .then(cache => cache.addAll(SHELL_URLS))
-      .catch(() => undefined) // a missing optional asset must not abort install
+      // Deliberately not addAll(): that is atomic, so one 404 would reject the
+      // whole batch and leave the shell cache empty — offline would break with
+      // no visible symptom. Each entry is cached on its own instead.
+      .then(cache =>
+        Promise.allSettled(SHELL_URLS.map(url => cache.add(new Request(url, { cache: 'reload' })))),
+      )
+      .catch(() => undefined)
       .then(() => self.skipWaiting()),
   )
 })

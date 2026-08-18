@@ -78,7 +78,8 @@ export function AddTripSheet({ isOpen, onClose, onAdd }: AddTripSheetProps) {
       />
 
       <div
-        className={`relative w-full sm:max-w-md flex flex-col gap-5 px-5 pt-3.5 pb-8 sm:p-6
+        className={`relative w-full sm:max-w-md flex flex-col gap-5 px-5 pt-3.5 pb-safe sm:p-6
+                    max-h-[92dvh] overflow-y-auto overscroll-contain
                     bg-surface border-t sm:border border-line-strong
                     rounded-t-sheet sm:rounded-hero shadow-[var(--fmb-shadow-pop)]
                     transition-transform duration-280 ease-[cubic-bezier(0.22,1,0.36,1)]
@@ -118,7 +119,7 @@ export function AddTripSheet({ isOpen, onClose, onAdd }: AddTripSheetProps) {
               spellCheck={false}
               placeholder="bus.trackingo.in/…?AB1234"
               aria-invalid={showError}
-              className={`w-full px-4 py-[15px] pr-10 rounded-field bg-app border font-mono text-sm text-ink
+              className={`w-full px-4 py-[15px] pr-10 rounded-field bg-app border font-mono text-base sm:text-sm text-ink
                           placeholder:text-ink-5 focus:outline-none transition-colors
                           ${showError ? 'border-delay' : parsed ? 'border-signal-edge' : 'border-line focus:border-line-strong'}`}
             />
@@ -161,7 +162,7 @@ export function AddTripSheet({ isOpen, onClose, onAdd }: AddTripSheetProps) {
               if (e.key === 'Enter') submit()
             }}
             placeholder="Morning commute"
-            className="w-full px-4 py-[15px] rounded-field bg-app border border-line text-sm text-ink
+            className="w-full px-4 py-[15px] rounded-field bg-app border border-line text-base sm:text-sm text-ink
                        placeholder:text-ink-5 focus:outline-none focus:border-line-strong transition-colors"
           />
         </div>

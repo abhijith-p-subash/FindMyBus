@@ -46,3 +46,6 @@ Thumbs.db
 
 # ESLint cache
 .eslintcache
+
+# Generated helper output
+scripts/.splash-tags.html

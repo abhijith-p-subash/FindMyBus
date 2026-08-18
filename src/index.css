@@ -186,7 +186,12 @@ body {
 
 /* ── Safe area ────────────────────────────────────────────── */
 .pb-safe { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); }
+
+/* Installed on iOS the web view can be laid out under the status bar, so every
+   top-anchored bar has to pay the inset itself or the clock and battery land on
+   top of it. `-2` adds the 0.5rem the tracking header wants on its own. */
 .pt-safe { padding-top: env(safe-area-inset-top); }
+.pt-safe-2 { padding-top: calc(env(safe-area-inset-top) + 0.5rem); }
 .inset-safe-b { bottom: max(1rem, env(safe-area-inset-bottom)); }
 
 /* ══════════════════════════════════════════════════════════════════════════

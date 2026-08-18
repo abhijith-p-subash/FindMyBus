@@ -58,7 +58,7 @@ export function StopTimeline({ data, myStopId, onSetMyStop, ref }: StopTimelineP
             placeholder="Find a stop…"
             aria-label="Find a stop"
             className="w-full pl-9 pr-9 py-2.5 rounded-field bg-surface-2 border border-line
-                       text-sm text-ink placeholder:text-ink-5 focus:outline-none
+                       text-base sm:text-sm text-ink placeholder:text-ink-5 focus:outline-none
                        focus:border-line-strong transition-colors"
           />
           {search && (

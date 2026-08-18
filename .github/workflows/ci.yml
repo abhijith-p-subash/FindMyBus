@@ -83,6 +83,14 @@ jobs:
           done
           exit $missing
 
+      - name: iOS launch images present
+        run: |
+          n=$(ls public/splash/*.png 2>/dev/null | wc -l)
+          echo "launch images: $n"
+          # Fewer than the full device matrix means some iPhones fall back to a
+          # blank white launch screen. Regenerate with scripts/gen-splash.sh.
+          [ "$n" -ge 18 ] || { echo "::error::expected 18 launch images, found $n"; exit 1; }
+
       - name: Manifest is valid JSON
         run: node -e "JSON.parse(require('fs').readFileSync('public/site.webmanifest','utf8'))"
 

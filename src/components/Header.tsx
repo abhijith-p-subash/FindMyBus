@@ -38,7 +38,7 @@ interface ListHeaderProps {
 
 export function ListHeader({ onAdd, isDark, onToggleTheme }: ListHeaderProps) {
   return (
-    <header className="sticky top-0 z-20 bg-app/90 backdrop-blur-md">
+    <header className="sticky top-0 z-20 bg-app/90 backdrop-blur-md pt-safe">
       <div className="max-w-2xl lg:max-w-none mx-auto px-5 h-14 flex items-center justify-between gap-3">
         <Logo />
         <div className="flex items-center gap-2">
@@ -112,7 +112,7 @@ export function TrackHeader({
   }
 
   return (
-    <header className="relative z-20 px-4 sm:px-5 pt-2 pb-3 flex items-center gap-3">
+    <header className="relative z-20 px-4 sm:px-5 pt-safe-2 pb-3 flex items-center gap-3">
       <button
         onClick={onBack}
         aria-label="Back to trips"

@@ -59,7 +59,7 @@ export function FirstRun({ onAdd, onStartDemo }: FirstRunProps) {
           placeholder="bus.trackingo.in/…?AB1234"
           aria-label="Tracking link or bus code"
           aria-invalid={!!error}
-          className={`w-full px-4 py-3.5 rounded-field bg-app border font-mono text-sm text-ink
+          className={`w-full px-4 py-3.5 rounded-field bg-app border font-mono text-base sm:text-sm text-ink
                       placeholder:text-ink-5 focus:outline-none transition-colors
                       ${error ? 'border-delay' : 'border-line focus:border-signal-edge'}`}
         />

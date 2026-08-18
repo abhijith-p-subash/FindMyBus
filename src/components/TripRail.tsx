@@ -35,7 +35,7 @@ export function TripRail({
   return (
     <aside
       className="hidden lg:flex flex-col w-[340px] xl:w-[380px] shrink-0 h-dvh sticky top-0
-                      border-r border-line-soft bg-app"
+                      border-r border-line-soft bg-app pt-safe"
     >
       <div className="px-5 h-16 flex items-center justify-between shrink-0">
         <Logo />
