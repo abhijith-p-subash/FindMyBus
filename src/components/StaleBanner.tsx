@@ -14,7 +14,13 @@ interface StaleBannerProps {
  * Trust in a live tracker is built by admitting when it isn't live. This says
  * exactly how old the data is and when the next attempt lands.
  */
-export function StaleBanner({ lastUpdated, retryIn, offline, onRetry, className = '' }: StaleBannerProps) {
+export function StaleBanner({
+  lastUpdated,
+  retryIn,
+  offline,
+  onRetry,
+  className = '',
+}: StaleBannerProps) {
   const [, tick] = useState(0)
 
   // The age has to keep counting even though no new data is arriving.
@@ -29,8 +35,10 @@ export function StaleBanner({ lastUpdated, retryIn, offline, onRetry, className 
       style={{ background: 'var(--fmb-delay-wash)', borderColor: 'var(--fmb-delay-edge)' }}
       role="status"
     >
-      <span className="w-[26px] h-[26px] shrink-0 rounded-[9px] bg-delay-wash
-                       flex items-center justify-center text-delay-text">
+      <span
+        className="w-[26px] h-[26px] shrink-0 rounded-[9px] bg-delay-wash
+                       flex items-center justify-center text-delay-text"
+      >
         {offline ? <AlertTriangle size={13} /> : <WifiOff size={13} />}
       </span>
 

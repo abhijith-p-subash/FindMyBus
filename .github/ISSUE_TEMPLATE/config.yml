@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/abhijith-p-subash/FindMyBus/security/advisories/new
+    about: Please report security issues privately, never as a public issue.
+  - name: Bus not tracking / wrong data
+    url: https://findmybus.abhijithpsubash.com/track/DEMO
+    about: FindMyBus only displays what trackingo.in reports. If the sample trip works but your bus does not, the upstream tracker is likely offline between trips.
+  - name: Question or idea to discuss
+    url: https://github.com/abhijith-p-subash/FindMyBus/discussions
+    about: For open-ended questions, ask here before building something.

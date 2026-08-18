@@ -2,12 +2,10 @@ import { useState, useCallback } from 'react'
 
 const KEY = 'bus-tracker-data-saver'
 export const LIVE_INTERVAL = 30_000
-export const ECO_INTERVAL  = 60_000
+export const ECO_INTERVAL = 60_000
 
 export function useDataSaver() {
-  const [dataSaver, setDataSaverState] = useState(() =>
-    localStorage.getItem(KEY) === 'true'
-  )
+  const [dataSaver, setDataSaverState] = useState(() => localStorage.getItem(KEY) === 'true')
 
   const toggleDataSaver = useCallback(() => {
     setDataSaverState(prev => {

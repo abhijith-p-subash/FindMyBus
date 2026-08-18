@@ -8,12 +8,24 @@ interface BeforeInstallPromptEvent extends Event {
 const DISMISSED_KEY = 'bus-tracker-install-dismissed'
 
 /**
- * Install affordance for the PWA.
+ * How this browser can install the app.
  *
- * Chromium fires `beforeinstallprompt` and lets us trigger the native sheet.
- * iOS Safari fires nothing and has no API — it only supports manual
- * "Add to Home Screen", so `iosHint` signals that we must explain it instead.
+ *  prompt  Chromium — `beforeinstallprompt` fired and we can open the native sheet
+ *  ios     iOS/iPadOS Safari — no API at all, only "Share → Add to Home Screen"
+ *  safari  macOS Safari — no API either, but it has "File → Add to Dock"
+ *  null    already installed, dismissed, or genuinely not installable
  */
+export type InstallMode = 'prompt' | 'ios' | 'safari' | null
+
+function detect() {
+  const ua = navigator.userAgent
+  // iPadOS 13+ reports itself as Macintosh; touch points are what give it away.
+  const isIPad = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1
+  const isIOS = /iPad|iPhone|iPod/.test(ua) || isIPad
+  const isSafari = /^((?!chrome|android|crios|fxios|edg|opr).)*safari/i.test(ua)
+  return { isIOS, isMacSafari: !isIOS && /Macintosh/.test(ua) && isSafari }
+}
+
 export function useInstallPrompt() {
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null)
   const [installed, setInstalled] = useState(false)
@@ -23,14 +35,15 @@ export function useInstallPrompt() {
     window.matchMedia('(display-mode: standalone)').matches ||
     (navigator as { standalone?: boolean }).standalone === true
 
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !('MSStream' in window)
-
   useEffect(() => {
     const onPrompt = (e: Event) => {
       e.preventDefault()
       setDeferred(e as BeforeInstallPromptEvent)
     }
-    const onInstalled = () => { setInstalled(true); setDeferred(null) }
+    const onInstalled = () => {
+      setInstalled(true)
+      setDeferred(null)
+    }
 
     window.addEventListener('beforeinstallprompt', onPrompt)
     window.addEventListener('appinstalled', onInstalled)
@@ -50,15 +63,18 @@ export function useInstallPrompt() {
 
   const dismiss = useCallback(() => {
     setDismissed(true)
-    try { localStorage.setItem(DISMISSED_KEY, 'true') } catch {}
+    try {
+      localStorage.setItem(DISMISSED_KEY, 'true')
+    } catch {}
   }, [])
 
-  const hidden = installed || standalone || dismissed
-
-  return {
-    canInstall: !hidden && deferred !== null,
-    iosHint:    !hidden && deferred === null && isIOS,
-    install,
-    dismiss,
+  let mode: InstallMode = null
+  if (!installed && !standalone && !dismissed) {
+    const { isIOS, isMacSafari } = detect()
+    if (deferred) mode = 'prompt'
+    else if (isIOS) mode = 'ios'
+    else if (isMacSafari) mode = 'safari'
   }
+
+  return { mode, install, dismiss }
 }
