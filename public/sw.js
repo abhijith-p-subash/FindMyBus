@@ -11,11 +11,10 @@
  *   tiles  — OpenStreetMap imagery, capped so it cannot grow without bound.
  */
 
-const VERSION = 'v2'
+const VERSION = 'v3'
 const SHELL = `fmb-shell-${VERSION}`
 const ASSETS = `fmb-assets-${VERSION}`
 const API = `fmb-api-${VERSION}`
-const TILES = `fmb-tiles-${VERSION}`
 
 const SHELL_URLS = [
   '/',
@@ -25,7 +24,6 @@ const SHELL_URLS = [
   '/icon-192.png',
   '/icon-512.png',
 ]
-const TILE_LIMIT = 220
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -43,7 +41,7 @@ self.addEventListener('install', event => {
 })
 
 self.addEventListener('activate', event => {
-  const keep = new Set([SHELL, ASSETS, API, TILES])
+  const keep = new Set([SHELL, ASSETS, API])
   event.waitUntil(
     caches
       .keys()
@@ -55,14 +53,6 @@ self.addEventListener('activate', event => {
 self.addEventListener('message', event => {
   if (event.data === 'SKIP_WAITING') self.skipWaiting()
 })
-
-/** Trim a cache to its newest `limit` entries (insertion order). */
-async function trim(cacheName, limit) {
-  const cache = await caches.open(cacheName)
-  const keys = await cache.keys()
-  if (keys.length <= limit) return
-  await Promise.all(keys.slice(0, keys.length - limit).map(k => cache.delete(k)))
-}
 
 /** Replay a cached API response, tagged so the UI can label it as stale. */
 async function replay(response) {
@@ -102,7 +92,8 @@ async function cacheFirst(request, cacheName) {
   const hit = await cache.match(request)
   if (hit) return hit
   const fresh = await fetch(request)
-  if (fresh.ok || fresh.type === 'opaque') cache.put(request, fresh.clone())
+  // Storage can be full or evicted; a failed write must not fail the request.
+  if (fresh.ok) cache.put(request, fresh.clone()).catch(() => undefined)
   return fresh
 }
 
@@ -112,17 +103,15 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(request.url)
 
-  if (url.hostname.endsWith('tile.openstreetmap.org')) {
-    event.respondWith(
-      cacheFirst(request, TILES)
-        .then(res => {
-          trim(TILES, TILE_LIMIT)
-          return res
-        })
-        .catch(() => Response.error()),
-    )
-    return
-  }
+  // Map tiles are deliberately NOT cached here. Cross-origin tiles come back as
+  // opaque responses, and the Cache API pads those to ~7 MB each for storage
+  // accounting. A few hundred tiles then blow the origin's quota — which on an
+  // installed iOS PWA is a smaller, separate bucket than Safari browsing, so the
+  // map died in standalone while still working in the browser. Once the quota is
+  // gone, cache operations start throwing and every tile request fails.
+  //
+  // The browser's own HTTP cache handles tiles perfectly well; OSM serves proper
+  // cache headers. Leave them alone.
 
   if (url.origin !== self.location.origin) return
 

@@ -139,6 +139,8 @@ function StopRow({
   const eta = formatClock(stop.expected_time || stop.arrival_time || stop.scheduled_time)
   const scheduled = formatClock(stop.scheduled_time)
   const late = stop.delay_time !== null && stop.delay_time > 0
+  /** The stop has been re-timed: worth showing what it originally was. */
+  const shifted = !!scheduled && !!eta && scheduled !== eta
 
   const departed = stop.departure_time ? formatClock(stop.departure_time) : ''
 
@@ -235,11 +237,18 @@ function StopRow({
             </span>
           )}
           {!isCurrent && (
-            <span
-              className={`font-mono font-medium text-[13px] leading-none tnum
-                              ${isMine ? 'text-signal-text' : late ? 'text-delay-text' : 'text-ink'}`}
-            >
-              {eta || '—'}
+            <span className="flex flex-col items-end gap-0.5">
+              <span
+                className={`font-mono font-medium text-[13px] leading-none tnum
+                            ${isMine ? 'text-signal-text' : 'text-ink'}`}
+              >
+                {eta || '—'}
+              </span>
+              {shifted && (
+                <span className="font-mono text-[10px] leading-none text-ink-5 line-through tnum">
+                  {scheduled}
+                </span>
+              )}
             </span>
           )}
         </div>
