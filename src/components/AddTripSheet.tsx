@@ -117,7 +117,7 @@ export function AddTripSheet({ isOpen, onClose, onAdd }: AddTripSheetProps) {
               autoComplete="off"
               autoCapitalize="characters"
               spellCheck={false}
-              placeholder="bus.trackingo.in/…?AB1234"
+              placeholder="Tracking link or Bus code"
               aria-invalid={showError}
               className={`w-full px-4 py-[15px] pr-10 rounded-field bg-app border font-mono text-base sm:text-sm text-ink
                           placeholder:text-ink-5 focus:outline-none transition-colors

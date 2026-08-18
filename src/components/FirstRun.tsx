@@ -56,7 +56,7 @@ export function FirstRun({ onAdd, onStartDemo }: FirstRunProps) {
           autoComplete="off"
           autoCapitalize="characters"
           spellCheck={false}
-          placeholder="bus.trackingo.in/…?AB1234"
+          placeholder="Tracking link or Bus code"
           aria-label="Tracking link or bus code"
           aria-invalid={!!error}
           className={`w-full px-4 py-3.5 rounded-field bg-app border font-mono text-base sm:text-sm text-ink
