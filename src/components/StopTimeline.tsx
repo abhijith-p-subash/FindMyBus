@@ -1,5 +1,5 @@
 import { useState, useEffect, useImperativeHandle, useRef } from 'react'
-import { Search, X } from 'lucide-react'
+import { Search, X, Gauge } from 'lucide-react'
 import { Stop, ApiResponse } from '../types'
 import { dedupeStops, getStopStatus, formatClock } from '../utils'
 
@@ -33,6 +33,7 @@ export function StopTimeline({ data, myStopId, onSetMyStop, ref }: StopTimelineP
   }, [data.current_sp_id])
 
   const currentIdx = stops.findIndex(s => s.id === data.current_sp_id)
+  const speed = data.current_status_details.details.speed
   const filtered = search
     ? stops.filter(s => s.service_place_name.toLowerCase().includes(search.toLowerCase()))
     : stops
@@ -96,6 +97,7 @@ export function StopTimeline({ data, myStopId, onSetMyStop, ref }: StopTimelineP
                 isNext={originalIdx === currentIdx + 1}
                 isSkipped={status === 'skipped'}
                 isLast={i === filtered.length - 1}
+                speed={isCurrent ? speed : undefined}
                 onPin={() => onSetMyStop?.(isMine ? null : stop.id)}
               />
             )
@@ -116,6 +118,8 @@ interface StopRowProps {
   isNext: boolean
   isSkipped: boolean
   isLast: boolean
+  /** Live vehicle speed. Only supplied for the current stop. */
+  speed?: number
   onPin: () => void
   ref?: React.Ref<HTMLLIElement>
 }
@@ -128,6 +132,7 @@ function StopRow({
   isNext,
   isSkipped,
   isLast,
+  speed,
   onPin,
   ref,
 }: StopRowProps) {
@@ -135,17 +140,17 @@ function StopRow({
   const scheduled = formatClock(stop.scheduled_time)
   const late = stop.delay_time !== null && stop.delay_time > 0
 
-  const sub = isCurrent
-    ? `Bus is here${stop.departure_time ? ` · departed ${formatClock(stop.departure_time)}` : ''}`
-    : isMine
-      ? 'your stop'
-      : isSkipped
-        ? 'skipped'
-        : scheduled && scheduled !== eta
-          ? `was ${scheduled}`
-          : scheduled
-            ? `scheduled ${scheduled}`
-            : ''
+  const departed = stop.departure_time ? formatClock(stop.departure_time) : ''
+
+  const sub = isMine
+    ? 'your stop'
+    : isSkipped
+      ? 'skipped'
+      : scheduled && scheduled !== eta
+        ? `was ${scheduled}`
+        : scheduled
+          ? `scheduled ${scheduled}`
+          : ''
 
   return (
     <li
@@ -157,16 +162,12 @@ function StopRow({
       {/* Rail */}
       <div className="flex flex-col items-center w-3.5 shrink-0 pt-1">
         <Dot isCurrent={isCurrent} isMine={isMine} isPast={isPast} isSkipped={isSkipped} />
-        {!isLast && (
-          <span
-            className="w-0.5 flex-1 min-h-9"
-            style={{
-              background: isCurrent
-                ? 'linear-gradient(var(--fmb-signal), var(--fmb-line))'
-                : 'var(--fmb-line)',
-            }}
-          />
-        )}
+        {!isLast &&
+          (isCurrent ? (
+            <span className="rail-live w-0.5 flex-1 min-h-9" />
+          ) : (
+            <span className="w-0.5 flex-1 min-h-9" style={{ background: 'var(--fmb-line)' }} />
+          ))}
       </div>
 
       {/* Content */}
@@ -192,7 +193,28 @@ function StopRow({
           >
             {stop.service_place_name.trim()}
           </span>
-          {sub && <span className="text-[11px] text-ink-4 truncate">{sub}</span>}
+          {isCurrent ? (
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span
+                className="flex items-center gap-1 rounded-[7px] bg-signal-wash px-1.5 py-0.5
+                           font-mono text-[10px] font-semibold leading-none text-signal-text tnum"
+              >
+                <Gauge size={9} />
+                {speed ?? 0} km/h
+              </span>
+              <span
+                className={`rounded-[7px] px-1.5 py-0.5 font-mono text-[10px] font-semibold
+                            leading-none tnum ${
+                              late ? 'bg-delay-wash text-delay-text' : 'bg-go-wash text-go-text'
+                            }`}
+              >
+                {late ? `+${stop.delay_time}m late` : 'On time'}
+              </span>
+              {departed && <span className="text-[11px] text-ink-4">departed {departed}</span>}
+            </div>
+          ) : (
+            sub && <span className="truncate text-[11px] text-ink-4">{sub}</span>
+          )}
         </div>
 
         <div className="shrink-0 flex items-center gap-2">
