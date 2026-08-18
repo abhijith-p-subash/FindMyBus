@@ -15,6 +15,7 @@ import { StaleBanner } from './StaleBanner'
 import { CompletedState } from './CompletedState'
 import { ErrorState } from './ErrorState'
 import { LoadingSkeleton } from './LoadingSkeleton'
+import { AppFooter } from './AppFooter'
 import { DemoBanner } from '../demo/DemoBanner'
 import { isDemoKey } from '../demo/demoApi'
 
@@ -209,9 +210,9 @@ export function TrackingScreen({
         </div>
       )}
 
-      <p className="text-center text-[11px] text-ink-5 pb-safe pt-4">
-        {isDemo ? 'Sample trip' : trip.key} · all data stays in your browser
-      </p>
+      <div className="pb-safe pt-4">
+        <AppFooter prefix={isDemo ? 'Sample trip' : trip.key} />
+      </div>
     </div>
   )
 }

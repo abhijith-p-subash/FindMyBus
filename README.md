@@ -106,27 +106,76 @@ radius, or animation in it.
 
 ---
 
-## A note on the data source
+## What this is, and what it isn't
 
-FindMyBus reads an **undocumented endpoint** belonging to `bus.trackingo.in`. This is not an
-official partnership or a sanctioned API, and there is no agreement with the operator. Practical
-consequences you should know before depending on this:
+**FindMyBus does not track buses.** It has no vehicle data, no route database, and no relationship
+with any bus operator. It is worth being precise about this, because it is the whole design.
 
-- The endpoint can change or disappear without warning, and the app will break when it does.
-- Only buses already tracked by trackingo.in can be tracked here. FindMyBus adds no data of its own.
-- The proxy exists to avoid browser CORS restrictions, not to hide or disguise traffic. Requests
-  reach the operator exactly as the browser made them.
-- Polling defaults to 30s, with a 60s eco mode. **Please don't lower these in a fork** — the point
-  is to stay well inside courteous usage of someone else's server.
+Bus operators already track their vehicles using **Trackingo**, a product of
+[Bitla Software Pvt. Ltd.](http://trackingo.in/) When you book, the operator sends you a tracking
+link or a code like `AB1234`. That code exists so that *you* can watch *your* bus — you are already
+entitled to see it.
 
-If you represent trackingo.in and would like something changed, please
-[open an issue](https://github.com/abhijith-p-subash/FindMyBus/issues) — it will be actioned.
+The problem is the screen you land on. The information is there, but it is hard to read on a phone,
+slow to make sense of, and doesn't answer the one question you actually have.
 
-Map tiles come from the OpenStreetMap public tile servers, subject to their
-[Tile Usage Policy](https://operations.osmfoundation.org/policies/tiles/). A production fork with
-real traffic should move to a proper tile provider.
+So FindMyBus is **a different front-end for a service you already have access to**:
 
----
+```
+operator gives you a code  ──►  you paste it into FindMyBus  ──►  FindMyBus asks Trackingo
+                                                                   for that one trip and draws it
+```
+
+It requests **one trip, for one user, from a code that user supplied**, at most once every 30
+seconds. It stores nothing on a server, aggregates nothing, and redistributes nothing. The nearest
+comparison is a reader-mode extension or an accessibility tool: it acts for a user who already has
+permission, on data they were already being shown.
+
+Everything good about the data comes from Trackingo. Everything about how it is presented is this
+project.
+
+### Not affiliated with Bitla Software
+
+> FindMyBus is an independent, unofficial project. It is **not affiliated with, endorsed by, or
+> connected to Bitla Software Pvt. Ltd. or Trackingo.** "Trackingo" and "Bitla" are the property of
+> their respective owners and are used here only to describe what this app is compatible with.
+>
+> Live bus data is provided by, and belongs to, Bitla Software. This project claims no rights over
+> it. **If Bitla asks us to stop, we will stop immediately** — contact
+> [abhijith.p.subash@gmail.com](mailto:abhijith.p.subash@gmail.com) or open an issue.
+
+### If you are forking or self-hosting
+
+Please read [`doc/LEGAL.md`](doc/LEGAL.md) first. It sets out the analysis under **Sections 43 and
+66 of the IT Act, 2000**, and the commitments that keep the position defensible. In short:
+
+- **Never lower the 30s / 60s polling floor.** Aggregate load is the realistic route to a
+  Section 43(f) disruption argument.
+- **Only ever request codes a user has supplied.** No enumeration, no guessing, no crawling.
+- **Never monetise it.** No revenue means no wrongful gain, which is what keeps this well clear of
+  Section 66.
+- **If an API key or any access control ever appears, stop.** Do not work around it.
+- **Never imply partnership or endorsement.**
+
+None of this is legal advice, and none of it has been reviewed by a lawyer. If you deploy this
+publicly, get your own advice.
+
+## Privacy — stated accurately
+
+Two different things, and it is worth not blurring them:
+
+**Stays on your device, always.** Your saved trips, names, pinned stops, and theme live in your
+browser's `localStorage` and are never transmitted anywhere. There are no accounts, no cookies, no
+analytics, and no third-party scripts.
+
+**Passes through our proxy.** Live tracking requests go `browser → /api/* → Netlify → Trackingo`,
+because a browser cannot call Trackingo directly without hitting CORS. **That proxy is our
+infrastructure and it sees each request** — your IP address, your user agent, and the tracking code
+in the URL. Netlify keeps standard access logs. We do not read them, build profiles, or retain
+anything ourselves, but it would be untrue to claim the request never reaches a server of ours.
+
+Map tiles are fetched directly by your browser from the OpenStreetMap tile servers, which see your
+IP for the same unavoidable reason.
 
 ## Deploying
 

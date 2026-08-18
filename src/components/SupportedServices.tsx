@@ -48,6 +48,42 @@ export function SupportedServices() {
 }
 
 /**
+ * Plain-language statement that this app is a presentation layer and nothing
+ * more. Users never read a README, so the disclosure has to live in the product.
+ *
+ * It also does real UX work: it sets the right expectation for why a bus can
+ * stop reporting, which is otherwise read as "this app is broken".
+ */
+export function DataSourceNote() {
+  const [primary] = SERVICES
+
+  return (
+    <div className="flex flex-col gap-2 rounded-tile border border-line-soft bg-surface-2 px-4 py-3.5">
+      <p className="text-[13px] font-semibold leading-tight text-ink">
+        A better screen, not a tracker
+      </p>
+      <p className="text-[12px] leading-relaxed text-ink-3 text-pretty">
+        Every position, stop time and delay you see comes from{' '}
+        <a
+          href={primary.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-signal-text underline decoration-signal-edge underline-offset-2"
+        >
+          {primary.name}
+        </a>
+        , your operator&rsquo;s tracking service. FindMyBus doesn&rsquo;t track buses itself — it
+        just presents that same information more clearly. If {primary.name} is down or your bus
+        isn&rsquo;t reporting, there is nothing for us to show.
+      </p>
+      <p className="text-[11px] leading-relaxed text-ink-4">
+        Independent and unofficial · not affiliated with Bitla Software
+      </p>
+    </div>
+  )
+}
+
+/**
  * One-line variant for places that cannot afford the full list — the add sheet,
  * the trip-list footer, and the desktop placeholder. Same source of truth.
  */
@@ -62,6 +98,7 @@ export function ServicesNote({ className = '' }: { className?: string }) {
           <span className="font-mono"> {service.domain}</span>
         </span>
       ))}
+      <span> — all live data comes from them</span>
     </p>
   )
 }

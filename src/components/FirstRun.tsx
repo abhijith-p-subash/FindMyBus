@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { ArrowRight, AlertCircle } from 'lucide-react'
 import { parseTrackingKey } from '../utils'
 import { AddTripResult } from '../hooks/useTrips'
-import { SupportedServices } from './SupportedServices'
+import { SupportedServices, DataSourceNote } from './SupportedServices'
 
 interface FirstRunProps {
   onAdd: (url: string, name: string) => AddTripResult
@@ -95,6 +95,7 @@ export function FirstRun({ onAdd, onStartDemo }: FirstRunProps) {
       </div>
 
       <SupportedServices />
+      <DataSourceNote />
     </div>
   )
 }

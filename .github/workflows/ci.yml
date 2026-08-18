@@ -91,6 +91,30 @@ jobs:
           # blank white launch screen. Regenerate with scripts/gen-splash.sh.
           [ "$n" -ge 18 ] || { echo "::error::expected 18 launch images, found $n"; exit 1; }
 
+      - name: Non-affiliation disclaimer present
+        run: |
+          set -euo pipefail
+          # Removing these silently changes the project's legal posture — see doc/LEGAL.md.
+          grep -q "not affiliated with" src/components/AppFooter.tsx \
+            || { echo "::error::in-app non-affiliation disclaimer missing"; exit 1; }
+          grep -qi "not affiliated with, endorsed by" README.md \
+            || { echo "::error::README non-affiliation disclaimer missing"; exit 1; }
+          grep -qi "NOT affiliated with" public/llms.txt \
+            || { echo "::error::llms.txt non-affiliation disclaimer missing"; exit 1; }
+          # In-product disclosure that this is a presentation layer, not a tracker.
+          grep -q "not a tracker" src/components/SupportedServices.tsx \
+            || { echo "::error::in-app data-source disclosure missing"; exit 1; }
+
+      - name: No real tracking codes committed
+        run: |
+          set -euo pipefail
+          # A real code is a live handle on a real vehicle. Examples must stay
+          # illustrative — see CONTRIBUTING.md.
+          if git grep -nIE '\b(AB1234|CD5678|OPERATOR)\b' -- . ':!.github/workflows/ci.yml'; then
+            echo "::error::a real tracking code is present; use an illustrative one"
+            exit 1
+          fi
+
       - name: Manifest is valid JSON
         run: node -e "JSON.parse(require('fs').readFileSync('public/site.webmanifest','utf8'))"
 

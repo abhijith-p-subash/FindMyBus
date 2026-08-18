@@ -2,7 +2,7 @@
 
 Thanks for being here. This is a small, opinionated codebase — a couple of thousand lines — so
 please read the conventions below before writing code. Most review comments on a first PR come from
-these five things.
+these six things.
 
 By participating you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 
@@ -33,7 +33,7 @@ dependency-free, so it is the natural starting point. Until then, say in your PR
 you actually exercised in the browser, and mention which viewport: the layout diverges at `lg`
 (1024px) between the phone column and the desktop two-pane view.
 
-## Five things that will trip you up
+## Six things that will trip you up
 
 **1. Never use a raw Tailwind colour.** Every colour goes through a design token
 (`bg-surface`, `text-ink-3`, `border-line`, `text-signal-text`). These resolve to CSS custom
@@ -54,8 +54,14 @@ timeline, and header. This was a real bug; please don't remove it.
 dependency array on purpose. Position, marker state, and resize are handled by separate effects.
 Letting the init effect re-run orphans a map instance.
 
-**5. Don't lower the polling interval.** 30s live / 60s eco is a deliberate courtesy to a server
-that isn't ours. See the data-source note in the [README](README.md#a-note-on-the-data-source).
+**5. Never commit a real tracking code.** Codes in examples (`AB1234`, `CD5678`) are illustrative
+and resolve to nothing. A real code is a live handle on a real vehicle — committing one publishes
+the ability to follow that bus, and CI will fail the build. This applies to issues and PR
+descriptions too: mask any code before pasting a URL or an API response.
+
+**6. Don't lower the polling interval.** 30s live / 60s eco is a deliberate courtesy to a server
+that isn't ours. See [What this is, and what it isn't](README.md#what-this-is-and-what-it-isnt) in the README,
+and [`doc/LEGAL.md`](doc/LEGAL.md).
 
 ## Style
 

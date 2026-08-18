@@ -1,6 +1,10 @@
 import { Stop, ApiResponse, TripLastKnown, TripStatus, Trip } from './types'
 
 // ─── URL / Key parsing ────────────────────────────────────────────────────────
+//
+// Codes in examples throughout this repo (AB1234, CD5678) are illustrative and
+// resolve to nothing. Never commit a real tracking code: it is a live handle on
+// a real vehicle, and publishing one hands anyone the ability to follow it.
 
 export function parseTrackingKey(input: string): string | null {
   const trimmed = input.trim()

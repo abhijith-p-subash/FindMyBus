@@ -8,7 +8,7 @@ import { TrackingScreen } from './components/TrackingScreen'
 import { TripRail } from './components/TripRail'
 import { AddTripSheet } from './components/AddTripSheet'
 import { Logo } from './components/Logo'
-import { ServicesNote } from './components/SupportedServices'
+import { DataSourceNote } from './components/SupportedServices'
 import { DEMO_KEY, DEMO_REFRESH_MS, isDemoKey, makeDemoTrip, resetDemo } from './demo/demoApi'
 
 type TripsAPI = ReturnType<typeof useTrips>
@@ -85,7 +85,9 @@ function ListPage({ tripsAPI, saver, isDark, onToggleTheme, onOpenAdd, onStartDe
             Try a sample trip
           </button>
         </div>
-        <ServicesNote className="text-center" />
+        <div className="w-full max-w-sm text-left">
+          <DataSourceNote />
+        </div>
       </div>
     </>
   )

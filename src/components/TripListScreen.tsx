@@ -7,6 +7,7 @@ import { InstallCard } from './InstallCard'
 import { EcoToggle } from './EcoToggle'
 import { ServicesNote } from './SupportedServices'
 import { BuyMeCoffeeButton } from './BuyMeCoffeeButton'
+import { AppFooter } from './AppFooter'
 import { SampleTripLink } from '../demo/SampleTripLink'
 
 interface TripListScreenProps {
@@ -85,9 +86,7 @@ export function TripListScreen({
           <BuyMeCoffeeButton />
           {!empty && <SampleTripLink onStart={onStartDemo} />}
         </div>
-        <p className="text-[11px] text-ink-5 text-center">
-          FindMyBus · all data stays in your browser
-        </p>
+        <AppFooter prefix="FindMyBus" />
       </footer>
     </div>
   )
