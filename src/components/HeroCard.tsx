@@ -3,6 +3,7 @@ import { ApiResponse } from '../types'
 import { DelayTrend } from '../hooks/useBusTracker'
 import {
   dedupeStops,
+  fixAge,
   computeProgress,
   findNextStop,
   stopName,
@@ -39,6 +40,13 @@ export function HeroCard({
   const progress = computeProgress(data)
   const delay = currentStop?.delay_time ?? null
 
+  // The operator's own words when they bother to send them, e.g. "Delayed by 16 min".
+  const runningStatus = currentStop?.running_status?.trim() || ''
+
+  // How old the vehicle's own fix is — not how long ago *we* polled. A position
+  // can already be minutes stale the instant it reaches us.
+  const measuredAgo = fixAge(data.current_status_details.details.timestamp)
+
   const nextEta = next
     ? formatClock(next.expected_time || next.arrival_time || next.scheduled_time)
     : ''
@@ -70,6 +78,18 @@ export function HeroCard({
           <span className="eyebrow">{stale ? 'est. min' : 'min away'}</span>
         </div>
       </div>
+
+      {(runningStatus || measuredAgo) && (
+        <div className="-mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px]">
+          {runningStatus && (
+            <span className={delay && delay > 0 ? 'text-delay-text' : 'text-go-text'}>
+              {runningStatus}
+            </span>
+          )}
+          {runningStatus && measuredAgo && <span className="text-ink-5">·</span>}
+          {measuredAgo && <span className="text-ink-4 tnum">position measured {measuredAgo}</span>}
+        </div>
+      )}
 
       <div className="flex flex-col gap-2.5">
         <div className="h-[5px] rounded-full bg-line overflow-hidden">

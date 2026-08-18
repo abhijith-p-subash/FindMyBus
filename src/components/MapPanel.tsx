@@ -177,8 +177,10 @@ export function MapPanel({
 
       <div className="absolute top-3 left-3 right-3 z-[900] flex items-start justify-between gap-2 pointer-events-none">
         <span
-          className="max-w-[62%] truncate px-2.5 py-1.5 rounded-chip bg-surface/85 backdrop-blur-md
-                         border border-line-strong text-[12px] text-ink-2"
+          className="max-w-[68%] px-2.5 py-1.5 rounded-chip bg-surface/85 backdrop-blur-md
+                     border border-line-strong text-[12px] leading-snug text-ink-2
+                     line-clamp-2 text-left"
+          title={location}
         >
           {location}
         </span>
@@ -193,7 +195,7 @@ export function MapPanel({
         )}
       </div>
 
-      <div className="absolute bottom-3 left-3 z-[900] flex items-center gap-2">
+      <div className="absolute bottom-12 lg:bottom-3 left-3 z-[900] flex items-center gap-2">
         <button onClick={openInMaps} title="Open in Maps" aria-label="Open in Maps" className={ctl}>
           <ExternalLink size={14} />
         </button>
@@ -214,7 +216,7 @@ export function MapPanel({
 
       {frozen && frozenAt && (
         <span
-          className="absolute bottom-3 right-3 z-[900] px-2.5 py-1.5 rounded-chip
+          className="absolute bottom-12 lg:bottom-3 right-3 z-[900] px-2.5 py-1.5 rounded-chip
                          bg-surface/85 backdrop-blur-md border border-line-strong
                          font-mono text-[11px] text-ink-3"
         >
