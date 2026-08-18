@@ -4,6 +4,8 @@ import { Logo } from './Logo'
 import { TripCard } from './TripCard'
 import { EcoToggle } from './EcoToggle'
 import { InstallCard } from './InstallCard'
+import { BuyMeCoffeeButton } from './BuyMeCoffeeButton'
+import { SampleTripLink } from '../demo/SampleTripLink'
 
 interface TripRailProps {
   trips: Trip[]
@@ -11,6 +13,7 @@ interface TripRailProps {
   onOpenTrip: (trip: Trip) => void
   onRemoveTrip: (key: string) => void
   onAdd: () => void
+  onStartDemo: () => void
   dataSaver: boolean
   onToggleDataSaver: () => void
   isDark: boolean
@@ -27,6 +30,7 @@ export function TripRail({
   onOpenTrip,
   onRemoveTrip,
   onAdd,
+  onStartDemo,
   dataSaver,
   onToggleDataSaver,
   isDark,
@@ -92,8 +96,12 @@ export function TripRail({
       </div>
 
       <div className="px-4 pb-4 flex flex-col gap-2.5 shrink-0">
+        <SampleTripLink onStart={onStartDemo} variant="card" />
         <InstallCard />
         <EcoToggle enabled={dataSaver} onToggle={onToggleDataSaver} />
+        <div className="flex justify-center pt-1">
+          <BuyMeCoffeeButton />
+        </div>
       </div>
     </aside>
   )

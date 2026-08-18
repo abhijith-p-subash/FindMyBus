@@ -228,6 +228,7 @@ export default function App() {
           if (key === activeKey) navigate('/', { state: { dir: 'back' } })
         }}
         onAdd={() => setShowAdd(true)}
+        onStartDemo={startDemo}
         dataSaver={saver.dataSaver}
         onToggleDataSaver={saver.toggleDataSaver}
         isDark={isDark}
