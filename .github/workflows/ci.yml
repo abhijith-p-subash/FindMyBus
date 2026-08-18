@@ -110,7 +110,13 @@ jobs:
           set -euo pipefail
           # A real code is a live handle on a real vehicle. Examples must stay
           # illustrative — see CONTRIBUTING.md.
-          if git grep -nIE '\b(AB1234|CD5678|OPERATOR)\b' -- . ':!.github/workflows/ci.yml'; then
+          #
+          # The literals are split so this file never contains a contiguous copy
+          # of a banned code. A `git filter-repo --replace-text` pass over the
+          # history would otherwise rewrite this guard too, leaving it matching
+          # the illustrative codes and failing every future build.
+          BANNED="YE0""407|YAV2""LH|BITL""AA"
+          if git grep -nIE "\b($BANNED)\b" -- .; then
             echo "::error::a real tracking code is present; use an illustrative one"
             exit 1
           fi
